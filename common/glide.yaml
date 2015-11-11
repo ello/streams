@@ -1,0 +1,4 @@
+package: common
+import:
+- package: github.com/julienschmidt/httprouter
+- package: github.com/unrolled/render
