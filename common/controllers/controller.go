@@ -19,7 +19,7 @@ type Controller interface {
 //This is simply a base struct for purposes of any global storage, to define
 //handle off of, and for other controllers to inherit from.  It is not exported.
 type baseController struct {
-	render.Render
+	renderer render.Render
 }
 
 //This is a helper function for providing generic error handling for any controllers
