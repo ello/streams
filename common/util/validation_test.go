@@ -8,15 +8,14 @@ import (
 )
 
 func ExampleValidateInt() {
-	value, err := util.ValidateInt("15", 10)
+	value, err := util.ValidateInt("15", 10) // validates, returns parsed val
 
-	fmt.Printf("%v | %v", value, err)
-	// Output: 15 | <nil>
+	fmt.Printf("%v | %v | ", value, err)
 
 	value, err = util.ValidateInt("1a5", 10) // fails to validate, returns default
 
 	fmt.Printf("%v | %v", value, err)
-	// Output: 10 | strconv.ParseInt: parsing "1a5": invalid syntax
+	// Output: 15 | <nil> | 10 | strconv.ParseInt: parsing "1a5": invalid syntax
 }
 
 func TestValidateInt(t *testing.T) {
