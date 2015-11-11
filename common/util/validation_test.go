@@ -15,7 +15,7 @@ func ExampleValidateInt() {
 
 	value, err = util.ValidateInt("15", 10) // validates, returns parsed val
 
-	fmt.Printf("%v | %v | ", value, err) // Output: 15 | <nil>
+	fmt.Printf("%v | %v", value, err) // Output: 15 | <nil>
 }
 
 func TestValidateInt(t *testing.T) {
