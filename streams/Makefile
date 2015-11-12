@@ -6,57 +6,44 @@ setup: get-tools db-setup dependencies
 
 get-tools:
 	@echo "=== get tools ==="
-	@brew install readline glide > /dev/null 2>&1
-	@$(DOT)
-	@brew install fswatch > /dev/null 2>&1
-	@$(DOT)
+	@brew install fswatch readline glide > /dev/null 2>&1
 	@go get -u "github.com/alecthomas/gometalinter"
-	@$(DOT)
 	@gometalinter --install --update --force
-	@$(DOT)
-	@$(PRINT_CHECK)
+	@$(PRINT_OK)
 
 db-setup:
 	@echo "=== setup db ==="
 	@dropdb --if-exists ello_services_test > /dev/null 2>&1
-	@$(DOT)
 	@createdb ello_services_test
-	@$(DOT)
 	@psql ello_services_test < schema.dump > /dev/null 2>&1
-	@$(PRINT_CHECK)
+	@$(PRINT_OK)
 
 dependencies:export GO15VENDOREXPERIMENT=1
 dependencies: clean
-	@echo "=== deps ==="
-	@glide install
-	@$(PRINT_CHECK)
+	@glide install > /dev/null 2>&1
+	@glide rebuild > /dev/null 2>&1
+	@$(PRINT_OK)
 
 clean:
-	@echo "=== cleaning ==="
 	@rm -rf vendor
-	@$(DOT)
 	@rm -rf bin
-	@$(PRINT_CHECK)
-
-errcheck:
-	@echo "=== errcheck ==="
-	@errcheck github.com/ello/services/stream/...
+	@$(PRINT_OK)
 
 vet:export GO15VENDOREXPERIMENT=1
 vet:
-	$(call mecho,"=== go vet ===")
 	@go vet `glide novendor`
+	@$(PRINT_OK)
 
 # TODO Re-enable these linters once vendor support is better (potentially 1.6)
 lint:export GO15VENDOREXPERIMENT=1
 lint:
-	$(call mecho,"=== go lint ===")
 	@gometalinter --vendor  --deadline=10s --disable=gotype --disable=aligncheck --disable=structcheck --dupl-threshold=70 `glide novendor`
+	@$(PRINT_OK)
 
 fmt:export GO15VENDOREXPERIMENT=1
 fmt:
-	$(call mecho,"=== go fmt ===")
 	@go fmt `glide novendor`
+	@$(PRINT_OK)
 
 install:export GO15VENDOREXPERIMENT=1
 install: test
@@ -65,9 +52,11 @@ install: test
 
 build:export GO15VENDOREXPERIMENT=1
 build:
-	@echo "=== go build ==="
 	@mkdir -p bin/
-	@go build -ldflags=$(GOLDFLAGS) -o bin/services
+	@go build -ldflags=$(GOLDFLAGS) -o bin/streams
+	@$(PRINT_OK)
+
+rebuild: clean build
 
 docker: test
 	@echo "=== docker build ==="
@@ -76,8 +65,8 @@ docker: test
 test:export GO15VENDOREXPERIMENT=1
 test:export LOGXI=dat:sqlx=off
 test: fmt vet lint
-	$(call mecho,"=== go test ===")
 	@go test `glide novendor` -v -cover
+	@$(PRINT_OK)
 
 test-w:
 	@echo "=== testing | watch mode ==="

@@ -6,41 +6,36 @@ setup: get-tools db-setup dependencies
 
 get-tools:
 	@echo "=== get tools ==="
-	@brew install readline glide > /dev/null 2>&1
-	@/bin/echo -n "."
-	@brew install fswatch > /dev/null 2>&1
-	@/bin/echo -n "."
+	@brew install fswatch readline glide > /dev/null 2>&1
 	@go get -u "github.com/alecthomas/gometalinter"
-	@/bin/echo -n "."
 	@gometalinter --install --update --force
-	@/bin/echo -n "."
-	@echo "√"
+	@$(PRINT_OK)
 
-db-setup:
-	@echo "=== setup db ==="
-	@dropdb --if-exists ello_services_test > /dev/null 2>&1
-	@/bin/echo -n "."
-	@createdb ello_services_test
-	@/bin/echo -n "."
-	@psql ello_services_test < schema.dump > /dev/null 2>&1
-	@echo "√"
+# db-setup:
+# 	@echo "=== setup db ==="
+# 	@dropdb --if-exists ello_services_test > /dev/null 2>&1
+# 	@/bin/echo -n "."
+# 	@createdb ello_services_test
+# 	@/bin/echo -n "."
+# 	@psql ello_services_test < schema.dump > /dev/null 2>&1
+# 	@echo "√"
 
-dependencies:export GO15VENDOREXPERIMENT=1
-dependencies: clean
-	@echo "=== deps ==="
-	@glide install
-	@/bin/echo -n "√"
+# dependencies:export GO15VENDOREXPERIMENT=1
+# dependencies: clean
+# 	@echo "=== deps ==="
+# 	@glide install
+# 	@/bin/echo -n "√"
 
-clean:
-	@echo "=== cleaning ==="
-	@rm -rf vendor
-	@/bin/echo -n "."
-	@rm -rf bin
-	@echo "√"
+# clean:
+# 	@echo "=== cleaning ==="
+# 	@rm -rf vendor
+# 	@/bin/echo -n "."
+# 	@rm -rf bin
+# 	@echo "√"
 
-errcheck:
-	@echo "=== errcheck ==="
-	@errcheck github.com/ello/services/stream/...
+# errcheck:
+# 	@echo "=== errcheck ==="
+# 	@errcheck github.com/ello/services/stream/...
 
 vet:export GO15VENDOREXPERIMENT=1
 vet:
@@ -70,7 +65,6 @@ build:
 	cd streams && $(MAKE) all
 
 test:
-	$(call becho,"===    TESTING    ===")
 	@$(PRINT_LINE)
 	$(call becho,"~~~    github.com/ello/ello-go/common    ~~~")
 	@$(PRINT_LINE)
