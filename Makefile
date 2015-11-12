@@ -1,14 +1,22 @@
 include Makefile.variable
 
-all: test build docker
+announce:
+	$(call becho,"=== Ello Go Project ===")
 
-setup: get-tools db-setup dependencies
+setup: announce get-tools
+	@$(PRINT_LINE)
+	$(call becho,"~~~    github.com/ello/ello-go/common    ~~~")
+	@$(PRINT_LINE)
+	@cd common && $(MAKE) setup
+	@$(PRINT_LINE)
+	$(call becho,"~~~    github.com/ello/ello-go/streams   ~~~")
+	@$(PRINT_LINE)
+	@cd streams && $(MAKE) setup
 
 get-tools:
-	@echo "=== get tools ==="
 	@brew install fswatch readline glide > /dev/null 2>&1
-	@go get -u "github.com/alecthomas/gometalinter"
-	@gometalinter --install --update --force
+	@go get -u "github.com/alecthomas/gometalinter" > /dev/null 2>&1
+	@gometalinter --install --update --force > /dev/null 2>&1
 	@$(PRINT_OK)
 
 # db-setup:
@@ -37,32 +45,21 @@ get-tools:
 # 	@echo "=== errcheck ==="
 # 	@errcheck github.com/ello/services/stream/...
 
-vet:export GO15VENDOREXPERIMENT=1
-vet:
-	@echo "=== go vet ==="
-	@go vet `glide novendor`
-
-lint:export GO15VENDOREXPERIMENT=1
-lint:
-	@echo "=== go lint ==="
-	# TODO Re-enable these linters once vendor support is better (potentially 1.6)
-	@gometalinter --vendor  --deadline=10s --disable=gotype --disable=aligncheck --disable=structcheck --dupl-threshold=70 `glide novendor`
-
-fmt:export GO15VENDOREXPERIMENT=1
-fmt:
-	@echo "=== go fmt ==="
-	@go fmt `glide novendor`
 
 install:export GO15VENDOREXPERIMENT=1
 install: test
 	@echo "=== go install ==="
 	@go install -ldflags=$(GOLDFLAGS)
 
-build:export GO15VENDOREXPERIMENT=1
-build:
-	@echo "=== build ==="
-	cd common && $(MAKE) all
-	cd streams && $(MAKE) all
+all:
+	@$(PRINT_LINE)
+	$(call becho,"~~~    github.com/ello/ello-go/common    ~~~")
+	@$(PRINT_LINE)
+	@cd common && $(MAKE) all
+	@$(PRINT_LINE)
+	$(call becho,"~~~    github.com/ello/ello-go/streams   ~~~")
+	@$(PRINT_LINE)
+	@cd streams && $(MAKE) all
 
 test:
 	@$(PRINT_LINE)

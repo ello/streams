@@ -2,14 +2,7 @@ include ../Makefile.variable
 
 all: test build docker
 
-setup: get-tools db-setup dependencies
-
-get-tools:
-	@echo "=== get tools ==="
-	@brew install fswatch readline glide > /dev/null 2>&1
-	@go get -u "github.com/alecthomas/gometalinter"
-	@gometalinter --install --update --force
-	@$(PRINT_OK)
+setup: dependencies
 
 db-setup:
 	@echo "=== setup db ==="
@@ -58,9 +51,9 @@ build:
 
 rebuild: clean build
 
-docker: test
+docker:
 	@echo "=== docker build ==="
-	@docker build -t services .
+	# @docker build -t services .
 
 test:export GO15VENDOREXPERIMENT=1
 test:export LOGXI=dat:sqlx=off
