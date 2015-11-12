@@ -13,6 +13,7 @@ func main() {
 
 	streamsController := controllers.NewStreamController()
 
+	// controllers register their routes with the router
 	streamsController.Register(router)
 
 	port := util.GetEnvWithDefault("ELLO_API_PORT", "8080")

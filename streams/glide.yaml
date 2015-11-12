@@ -8,3 +8,4 @@ package: github.com/ello/ello-go/streams
 import:
 - package: github.com/julienschmidt/httprouter
 - package: github.com/unrolled/render
+- package: github.com/ello/ello-go/common
