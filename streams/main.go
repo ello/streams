@@ -1,12 +1,20 @@
 package main
 
 import (
-	"fmt"
+	"net/http"
 
 	"github.com/ello/ello-go/common/util"
+	"github.com/ello/ello-go/streams/controllers"
+	"github.com/julienschmidt/httprouter"
 )
 
 func main() {
-	v, err := util.ValidateInt("123", 0)
-	fmt.Printf("THIS IS STREAMZ with example values of %v %v", v, err)
+	router := httprouter.New()
+
+	streamsController := controllers.NewStreamController()
+
+	streamsController.Register(router)
+
+	port := util.GetEnvWithDefault("ELLO_API_PORT", "8080")
+	http.ListenAndServe(":"+port, router)
 }

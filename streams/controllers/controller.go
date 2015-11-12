@@ -3,11 +3,12 @@ package controllers
 import (
 	"net/http"
 
+	common "github.com/ello/ello-go/common/http"
 	"github.com/julienschmidt/httprouter"
 	"github.com/unrolled/render"
 )
 
-//Convienance for the handle function
+//Action is a convienance for the handle function
 type action func(rw http.ResponseWriter, r *http.Request, ps httprouter.Params) error
 
 //Controller is the interface all of our controllers must implement.
@@ -18,20 +19,19 @@ type Controller interface {
 
 // BaseController is simply a base struct for purposes of any global storage, to define
 //handle off of, and for other controllers to inherit from.  It is not exported.
-type BaseController struct {
-	renderer render.Render
+type baseController struct {
+	render.Render
 }
 
-//This is a helper function for providing generic error handling for any controllers
-//that choose to wrap their actions with it.  It's possible we could redefine this as ServeHTTP
-//to avoid the need to call it, but we'll see.
-func (c *BaseController) handle(a action) httprouter.Handle {
+//Handle is a helper function for providing generic error handling for any controllers
+//that choose to wrap their actions with it.
+func (c *baseController) Handle(a action) httprouter.Handle {
 	return httprouter.Handle(func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 		err := a(w, r, ps)
 		if err != nil {
 			switch e := err.(type) {
 			// This refers to controllers.Error
-			case Error:
+			case common.Error:
 				// We can retrieve the status here and write out a specific
 				// HTTP status code.
 				// log.Printf("HTTP %d - %s", e.Status(), e)
