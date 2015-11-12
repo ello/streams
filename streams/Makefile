@@ -7,36 +7,36 @@ setup: get-tools db-setup dependencies
 get-tools:
 	@echo "=== get tools ==="
 	@brew install readline glide > /dev/null 2>&1
-	@/bin/echo -n "."
+	@$(DOT)
 	@brew install fswatch > /dev/null 2>&1
-	@/bin/echo -n "."
+	@$(DOT)
 	@go get -u "github.com/alecthomas/gometalinter"
-	@/bin/echo -n "."
+	@$(DOT)
 	@gometalinter --install --update --force
-	@/bin/echo -n "."
-	@echo "√"
+	@$(DOT)
+	@$(PRINT_CHECK)
 
 db-setup:
 	@echo "=== setup db ==="
 	@dropdb --if-exists ello_services_test > /dev/null 2>&1
-	@/bin/echo -n "."
+	@$(DOT)
 	@createdb ello_services_test
-	@/bin/echo -n "."
+	@$(DOT)
 	@psql ello_services_test < schema.dump > /dev/null 2>&1
-	@echo "√"
+	@$(PRINT_CHECK)
 
 dependencies:export GO15VENDOREXPERIMENT=1
 dependencies: clean
 	@echo "=== deps ==="
 	@glide install
-	@/bin/echo -n "√"
+	@$(PRINT_CHECK)
 
 clean:
 	@echo "=== cleaning ==="
 	@rm -rf vendor
-	@/bin/echo -n "."
+	@$(DOT)
 	@rm -rf bin
-	@echo "√"
+	@$(PRINT_CHECK)
 
 errcheck:
 	@echo "=== errcheck ==="
@@ -44,18 +44,18 @@ errcheck:
 
 vet:export GO15VENDOREXPERIMENT=1
 vet:
-	@echo "=== go vet ==="
+	$(call mecho,"=== go vet ===")
 	@go vet `glide novendor`
 
+# TODO Re-enable these linters once vendor support is better (potentially 1.6)
 lint:export GO15VENDOREXPERIMENT=1
 lint:
-	@echo "=== go lint ==="
-	# TODO Re-enable these linters once vendor support is better (potentially 1.6)
+	$(call mecho,"=== go lint ===")
 	@gometalinter --vendor  --deadline=10s --disable=gotype --disable=aligncheck --disable=structcheck --dupl-threshold=70 `glide novendor`
 
 fmt:export GO15VENDOREXPERIMENT=1
 fmt:
-	@echo "=== go fmt ==="
+	$(call mecho,"=== go fmt ===")
 	@go fmt `glide novendor`
 
 install:export GO15VENDOREXPERIMENT=1
@@ -76,7 +76,7 @@ docker: test
 test:export GO15VENDOREXPERIMENT=1
 test:export LOGXI=dat:sqlx=off
 test: fmt vet lint
-	@echo "=== go test ==="
+	$(call mecho,"=== go test ===")
 	@go test `glide novendor` -v -cover
 
 test-w:

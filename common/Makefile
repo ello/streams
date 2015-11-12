@@ -36,10 +36,10 @@ vet:
 	$(call mecho,"=== go vet ===")
 	@go vet `glide novendor`
 
+# TODO Re-enable these linters once vendor support is better (potentially 1.6)
 lint:export GO15VENDOREXPERIMENT=1
 lint:
 	$(call mecho,"=== go lint ===")
-	# TODO Re-enable these linters once vendor support is better (potentially 1.6)
 	@gometalinter --vendor  --deadline=10s --disable=gotype --disable=aligncheck --disable=structcheck --dupl-threshold=70 `glide novendor`
 
 fmt:export GO15VENDOREXPERIMENT=1
