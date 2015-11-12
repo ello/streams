@@ -1,0 +1,35 @@
+NO_COLOR=\033[0m
+OK_COLOR=\033[32;01m
+ERROR_COLOR=\033[31;01m
+WARN_COLOR=\033[33;01m
+TOPIC_COLOR=\033[36;01m
+
+OK_STRING=$(OK_COLOR)[OK]$(NO_COLOR)
+CHECK_STRING=$(OK_COLOR)√$(NO_COLOR)
+ERROR_STRING=$(ERROR_COLOR)[ERRORS]$(NO_COLOR)
+WARN_STRING=$(WARN_COLOR)[WARNINGS]$(NO_COLOR)
+LINE_STRING=$(TOPIC_COLOR)~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~$(NO_COLOR)
+
+AWK_CMD = awk '{ printf "%-30s %-10s\n",$$1, $$2; }'
+PRINT_ERROR = printf "$@ $(ERROR_STRING)\n" | $(AWK_CMD) && printf "$(CMD)\n$$LOG\n" && false
+PRINT_WARNING = printf "$@ $(WARN_STRING)\n" | $(AWK_CMD) && printf "$(CMD)\n$$LOG\n"
+PRINT_OK = printf "$@ $(OK_STRING)\n" | $(AWK_CMD)
+PRINT_CHECK = printf "$(CHECK_STRING)\n"
+PRINT_LINE = printf "$(LINE_STRING)\n"
+DOT = printf "."
+
+BRANCH=`git rev-parse --abbrev-ref HEAD`
+COMMIT=`git rev-parse --short HEAD`
+GOLDFLAGS="-X main.branch=$(BRANCH) -X main.commit=$(COMMIT)"
+
+define becho
+      @tput setaf 6
+      @echo $1
+      @tput sgr0
+endef
+
+define mecho
+      @tput setaf 5
+      @echo $1
+      @tput sgr0
+endef
