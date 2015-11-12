@@ -16,16 +16,16 @@ type Controller interface {
 	Register(router *httprouter.Router)
 }
 
-//This is simply a base struct for purposes of any global storage, to define
+// BaseController is simply a base struct for purposes of any global storage, to define
 //handle off of, and for other controllers to inherit from.  It is not exported.
-type baseController struct {
+type BaseController struct {
 	renderer render.Render
 }
 
 //This is a helper function for providing generic error handling for any controllers
 //that choose to wrap their actions with it.  It's possible we could redefine this as ServeHTTP
 //to avoid the need to call it, but we'll see.
-func (c *baseController) handle(a action) httprouter.Handle {
+func (c *BaseController) handle(a action) httprouter.Handle {
 	return httprouter.Handle(func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 		err := a(w, r, ps)
 		if err != nil {
