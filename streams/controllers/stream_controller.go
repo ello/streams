@@ -69,10 +69,6 @@ func (c *streamController) addToStream(w http.ResponseWriter, r *http.Request, p
 	body, err := ioutil.ReadAll(r.Body)
 	log.WithFields(fieldsFor(r, body, err)).Debug("/addToStream")
 
-	//content id
-	//timestamp
-	//type
-
 	// do stuff
 
 	c.JSON(w, http.StatusCreated, nil)
