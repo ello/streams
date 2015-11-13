@@ -14,8 +14,18 @@ var _ = Describe("StreamController", func() {
 			id, _ := uuid.V4()
 
 			Request("POST", "/stream/"+id.String(), "hi")
+			logResponse(response)
 
 			Expect(response.Code).To(Equal(http.StatusCreated))
+		})
+
+		It("should return a status 201 when passed a correct body", func() {
+			id, _ := uuid.V4()
+
+			Request("GET", "/stream/"+id.String(), "")
+			logResponse(response)
+
+			Expect(response.Code).To(Equal(http.StatusOK))
 		})
 
 		// 	It("should return a status 200 with no args", func() {

@@ -3,6 +3,7 @@ package controllers
 import (
 	"net/http"
 
+	"github.com/Sirupsen/logrus"
 	common "github.com/ello/ello-go/common/http"
 	"github.com/julienschmidt/httprouter"
 	"github.com/unrolled/render"
@@ -44,4 +45,14 @@ func (c *baseController) handle(a action) httprouter.Handle {
 			}
 		}
 	})
+}
+
+func fieldsFor(r *http.Request, body []byte, err error) logrus.Fields {
+	return logrus.Fields{
+		"url":     r.URL,
+		"method":  r.Method,
+		"headers": r.Header,
+		"body":    string(body[:]),
+		"err":     err,
+	}
 }

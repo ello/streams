@@ -69,3 +69,11 @@ func TestControllers(t *testing.T) {
 	RegisterFailHandler(Fail)
 	RunSpecs(t, "Controllers Suite")
 }
+
+func logResponse(r *httptest.ResponseRecorder) {
+	log.WithFields(log.Fields{
+		"status":  r.Code,
+		"headers": r.HeaderMap,
+		"body":    r.Body.String(),
+	}).Debug("Got Response")
+}
