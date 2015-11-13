@@ -3,9 +3,6 @@ import:
 - package: github.com/onsi/ginkgo
 - package: github.com/onsi/gomega
 - package: github.com/julienschmidt/httprouter
-- package: github.com/ello/ello-go
-  subpackages:
-  - common
 - package: github.com/golang/protobuf
   subpackages:
   - /proto

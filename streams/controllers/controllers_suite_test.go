@@ -41,15 +41,18 @@ var (
 )
 
 func Request(method string, route string, body string) {
-	request, err := http.NewRequest(method, route, strings.NewReader(body))
+	r, err := http.NewRequest(method, route, strings.NewReader(body))
 	response = httptest.NewRecorder()
 
 	log.WithFields(log.Fields{
-		"request": request,
+		"url":     r.URL,
+		"method":  r.Method,
+		"headers": r.Header,
+		"body":    body,
 		"errors":  err,
-	}).Debug("About to serve request")
+	}).Debug("About to issue request")
 
-	router.ServeHTTP(response, request)
+	router.ServeHTTP(response, r)
 }
 
 var _ = BeforeSuite(func() {
@@ -58,7 +61,6 @@ var _ = BeforeSuite(func() {
 	router = httprouter.New()
 
 	streamController := controllers.NewStreamController()
-	log.Debug("StreamController %v", streamController)
 
 	streamController.Register(router)
 })

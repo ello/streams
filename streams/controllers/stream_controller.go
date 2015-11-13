@@ -1,8 +1,7 @@
 package controllers
 
 import (
-	"errors"
-	"fmt"
+	"io/ioutil"
 	"net/http"
 
 	log "github.com/Sirupsen/logrus"
@@ -19,39 +18,40 @@ func NewStreamController() Controller {
 }
 
 func (c *streamController) Register(router *httprouter.Router) {
-	log.Debug("About to register")
-
 	router.POST("/streams", c.handle(c.coalesceStreams))
 	router.GET("/stream/:id", c.handle(c.getStream))
 	router.POST("/stream/:id", c.handle(c.addToStream))
 
-	log.Debug("Routes Registered %v", router)
-
+	log.Debug("Routes Registered")
 }
 
 func (c *streamController) coalesceStreams(w http.ResponseWriter, r *http.Request, ps httprouter.Params) error {
-	fmt.Println("coalesce")
+	body, err := ioutil.ReadAll(r.Body)
+	log.WithFields(fieldsFor(r, body, err)).Debug("/coalesce")
+
 	return nil
 }
 
 func (c *streamController) getStream(w http.ResponseWriter, r *http.Request, ps httprouter.Params) error {
-	log.WithFields(log.Fields{
-		"request": r,
-		"params":  ps,
-		"id":      ps.ByName("id"),
-	}).Debug("/getStream")
+	log.WithFields(fieldsFor(r, nil, nil)).Debug("/getStream")
 
 	return nil
 }
 
 func (c *streamController) addToStream(w http.ResponseWriter, r *http.Request, ps httprouter.Params) error {
-
-	log.WithFields(log.Fields{
-		"request": r,
-		"params":  ps,
-		"id":      ps.ByName("id"),
-	}).Debug("/addToStream")
+	body, err := ioutil.ReadAll(r.Body)
+	log.WithFields(fieldsFor(r, body, err)).Debug("/addToStream")
 
 	c.JSON(w, http.StatusCreated, "")
-	return errors.New("FAIL IT ALREADY")
+	return nil
+}
+
+func fieldsFor(r *http.Request, body []byte, err error) log.Fields {
+	return log.Fields{
+		"url":     r.URL,
+		"method":  r.Method,
+		"headers": r.Header,
+		"body":    string(body[:]),
+		"err":     err,
+	}
 }

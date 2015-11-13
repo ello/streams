@@ -13,7 +13,7 @@ var _ = Describe("StreamController", func() {
 		It("should return a status 201 when passed a correct body", func() {
 			id, _ := uuid.V4()
 
-			Request("POST", "/stream/"+id.String(), "")
+			Request("POST", "/stream/"+id.String(), "hi")
 
 			Expect(response.Code).To(Equal(http.StatusCreated))
 		})
