@@ -25,7 +25,7 @@ type baseController struct {
 
 //Handle is a helper function for providing generic error handling for any controllers
 //that choose to wrap their actions with it.
-func (c *baseController) Handle(a action) httprouter.Handle {
+func (c *baseController) handle(a action) httprouter.Handle {
 	return httprouter.Handle(func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 		err := a(w, r, ps)
 		if err != nil {

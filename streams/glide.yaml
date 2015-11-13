@@ -1,11 +1,15 @@
-# Glide YAML configuration file
-# Set this to your fully qualified package name, e.g.
-# github.com/Masterminds/foo. This should be the
-# top level package.
 package: github.com/ello/ello-go/streams
-
-# Declare your project's dependencies.
 import:
+- package: github.com/onsi/ginkgo
+- package: github.com/onsi/gomega
 - package: github.com/julienschmidt/httprouter
+- package: github.com/ello/ello-go
+  subpackages:
+  - common
+- package: github.com/golang/protobuf
+  subpackages:
+  - /proto
+- package: github.com/Sirupsen/logrus
+- package: gopkg.in/gemnasium/logrus-airbrake-hook.v2
+- package: github.com/m4rw3r/uuid
 - package: github.com/unrolled/render
-- package: github.com/ello/ello-go/common
