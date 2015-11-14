@@ -53,14 +53,23 @@ func (c *streamController) coalesceStreams(w http.ResponseWriter, r *http.Reques
 func (c *streamController) getStream(w http.ResponseWriter, r *http.Request, ps httprouter.Params) error {
 	log.WithFields(fieldsFor(r, nil, nil)).Debug("/getStream")
 
-	uuid, _ := uuid.V4()
-	s := &StreamItem{
-		ID:        uuid,
-		Timestamp: time.Now(),
-		Type:      POST,
+	//fake data
+	uuid1, _ := uuid.V4()
+	uuid2, _ := uuid.V4()
+
+	items := []StreamItem{
+		{
+			ID:        uuid1,
+			Timestamp: time.Now(),
+			Type:      POST,
+		}, {
+			ID:        uuid2,
+			Timestamp: time.Now(),
+			Type:      REPOST,
+		},
 	}
 
-	c.JSON(w, http.StatusOK, s)
+	c.JSON(w, http.StatusOK, items)
 
 	return nil
 }

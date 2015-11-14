@@ -50,6 +50,9 @@ install:export GO15VENDOREXPERIMENT=1
 install: test
 	@echo "=== go install ==="
 	@go install -ldflags=$(GOLDFLAGS)
+nuke:
+	@make setup
+	@make all
 
 all:
 	@$(PRINT_LINE)
