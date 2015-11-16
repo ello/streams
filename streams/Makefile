@@ -33,10 +33,9 @@ lint:
 	@gometalinter --vendor  --deadline=10s --disable=gotype --disable=aligncheck --disable=structcheck --dupl-threshold=70 `glide novendor`
 	@$(PRINT_OK)
 
-# TODO Consider switching to gofmt -s -w with xargs
 fmt:export GO15VENDOREXPERIMENT=1
 fmt:
-	@go fmt `glide nv`
+	@gofmt -s -w `glide nv | sed 's/\.\.\./*.go /'`
 	@$(PRINT_OK)
 
 install:export GO15VENDOREXPERIMENT=1

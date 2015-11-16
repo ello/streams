@@ -35,6 +35,11 @@ type StreamItem struct {
 	StreamID  uuid.UUID      `json:"stream_id"`
 }
 
+//StreamQuery represents a query for multiple streams
+type StreamQuery struct {
+	Streams []uuid.UUID `json:"streams"`
+}
+
 //NewStreamController is the exported constructor for a streams controller
 func NewStreamController() Controller {
 	return &streamController{}
@@ -51,6 +56,13 @@ func (c *streamController) Register(router *httprouter.Router) {
 func (c *streamController) coalesceStreams(w http.ResponseWriter, r *http.Request, ps httprouter.Params) error {
 	body, err := ioutil.ReadAll(r.Body)
 	log.WithFields(fieldsFor(r, body, err)).Debug("/coalesce")
+
+	var query StreamQuery
+	err = json.Unmarshal(body, &query)
+
+	if err != nil {
+		return common.StatusError{Code: 422, Err: err}
+	}
 
 	streamID, _ := uuid.V4()
 	items := generateFakeResponse(streamID)
@@ -105,7 +117,8 @@ func generateFakeResponse(streamID uuid.UUID) []StreamItem {
 			Timestamp: time.Now(),
 			Type:      POST,
 			StreamID:  streamID,
-		}, {
+		},
+		{
 			ID:        uuid2,
 			Timestamp: time.Now(),
 			Type:      REPOST,

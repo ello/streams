@@ -95,6 +95,7 @@ var _ = Describe("StreamController", func() {
 
 			Expect(response.Code).To(Equal(422))
 		})
+
 		It("should return a status 422 when passed an invalid type", func() {
 			jsonStr := `[
 				{
@@ -158,11 +159,31 @@ var _ = Describe("StreamController", func() {
 	})
 	Context("when retrieving streams via /streams/coalesce", func() {
 
-		It("should return a status 201 when accessed with a valid ID", func() {
-			Request("POST", "/streams/coalesce", "")
+		It("should return a status 200 with a valid query string", func() {
+			q := controllers.StreamQuery{
+				Streams: []uuid.UUID{id},
+			}
+			json, _ := json.Marshal(q)
+			Request("POST", "/streams/coalesce", string(json))
 			logResponse(response)
 
 			Expect(response.Code).To(Equal(http.StatusOK))
+		})
+
+		It("should return a status 200 with a valid query string", func() {
+			q := `{"streams":["10e30ca7-b64d-4510-aaff-775fad0f62ed","6da0fb88-f8f5-40d3-a42c-97147a41011d"]}`
+			Request("POST", "/streams/coalesce", q)
+			logResponse(response)
+
+			Expect(response.Code).To(Equal(http.StatusOK))
+		})
+
+		It("should return a status 422 with an invalid uuid", func() {
+			q := `{"streams":["10e30ca7-b64d-4510-aaff-775fad0f62ed","abc123"]}`
+			Request("POST", "/streams/coalesce", q)
+			logResponse(response)
+
+			Expect(response.Code).To(Equal(422))
 		})
 
 		It("should return a status 422 when passed an invalid query", func() {
@@ -171,62 +192,5 @@ var _ = Describe("StreamController", func() {
 
 			Expect(response.Code).To(Equal(422))
 		})
-
-		// 	It("should return a status 200 with no args", func() {
-		// 		Request("GET", "/users")
-		// 		var data []service.User
-		// 		_ = json.Unmarshal(response.Body.Bytes(), &data)
-		//
-		// 		Expect(response.Code).To(Equal(http.StatusOK))
-		// 		Expect(data[0].Username).To(Equal("rtyer"))
-		// 	})
-		//
-		// 	It("should use the passed limit/offset", func() {
-		// 		Request("GET", "/users?limit=5&offset=13")
-		//
-		// 		Expect(response.Code).To(Equal(http.StatusOK))
-		// 		Expect(userService.lastLimit).To(Equal(5))
-		// 		Expect(userService.lastOffset).To(Equal(13))
-		// 	})
-		//
-		// 	It("should correctly validate the limit", func() {
-		// 		Request("GET", "/users?limit=a")
-		//
-		// 		Expect(response.Code).To(Equal(http.StatusNotAcceptable))
-		// 	})
-		//
-		// 	It("should correctly validate the offset", func() {
-		// 		Request("GET", "/users?offset=a")
-		//
-		// 		Expect(response.Code).To(Equal(http.StatusNotAcceptable))
-		// 	})
-		// })
-		// Context("when calling /user/<username>", func() {
-		//
-		// 	It("should return a status 200 with a user that is present", func() {
-		// 		Request("GET", "/users/rtyer")
-		// 		var user service.User
-		// 		_ = json.Unmarshal(response.Body.Bytes(), &user)
-		//
-		// 		Expect(response.Code).To(Equal(http.StatusOK))
-		// 		Expect(user.Username).To(Equal("rtyer"))
-		// 	})
-		//
-		// 	It("should return a status 404 with a non existent user", func() {
-		// 		Request("GET", "/users/asdf")
-		//
-		// 		Expect(response.Code).To(Equal(http.StatusNotFound))
-		// 	})
-		//
-		// 	It("should return a status 406 if the username is invalid", func() {
-		// 		Request("GET", "/users/^&*$")
-		//
-		// 		Expect(response.Code).To(Equal(http.StatusNotAcceptable))
-		// 	})
-		//
-		// 	It("should accept UTF-8 characters for the username", func() {
-		// 		Request("GET", "/users/ßåœ")
-		// 		Expect(response.Code).NotTo(Equal(http.StatusNotAcceptable))
-		// 	})
 	})
 })
