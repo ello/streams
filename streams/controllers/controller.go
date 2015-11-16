@@ -3,6 +3,8 @@ package controllers
 import (
 	"net/http"
 
+	log "github.com/Sirupsen/logrus"
+
 	"github.com/Sirupsen/logrus"
 	common "github.com/ello/ello-go/common/http"
 	"github.com/julienschmidt/httprouter"
@@ -35,7 +37,7 @@ func (c *baseController) handle(a action) httprouter.Handle {
 			case common.Error:
 				// We can retrieve the status here and write out a specific
 				// HTTP status code.
-				// log.Printf("HTTP %d - %s", e.Status(), e)
+				log.Debugf("HTTP %d - %s", e.Status(), e)
 				http.Error(w, e.Error(), e.Status())
 			default:
 				// Any error types we don't specifically look out for default

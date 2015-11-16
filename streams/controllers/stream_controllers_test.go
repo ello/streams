@@ -9,23 +9,63 @@ import (
 )
 
 var _ = Describe("StreamController", func() {
-	Context("when posting to /stream/:id", func() {
-		It("should return a status 201 when passed a correct body", func() {
-			id, _ := uuid.V4()
+	var id uuid.UUID
 
-			Request("POST", "/stream/"+id.String(), "hi")
+	BeforeEach(func() {
+		id, _ = uuid.V4()
+	})
+
+	Context("when adding content via PUT /streams", func() {
+
+		It("should return a status 201 when passed a correct body", func() {
+
+			Request("PUT", "/streams", "hi")
 			logResponse(response)
 
 			Expect(response.Code).To(Equal(http.StatusCreated))
 		})
 
-		It("should return a status 201 when passed a correct body", func() {
-			id, _ := uuid.V4()
+		It("should attempt to add the content item to the streamservice", func() {
+			//todo
+		})
 
+		It("should return a status 422 when passed an invalid body/query", func() {
+			Request("PUT", "/streams", "hi")
+			logResponse(response)
+
+			Expect(response.Code).To(Equal(422))
+		})
+	})
+	Context("when retrieving a stream via /stream/:id", func() {
+
+		It("should return a status 201 when accessed with a valid ID", func() {
 			Request("GET", "/stream/"+id.String(), "")
 			logResponse(response)
 
 			Expect(response.Code).To(Equal(http.StatusOK))
+		})
+
+		It("should return a status 422 when passed an invalid id", func() {
+			Request("GET", "/stream/"+"abc123", "")
+			logResponse(response)
+
+			Expect(response.Code).To(Equal(422))
+		})
+	})
+	Context("when retrieving streams via /streams/coalesce", func() {
+
+		It("should return a status 201 when accessed with a valid ID", func() {
+			Request("POST", "/streams/coalesce", "")
+			logResponse(response)
+
+			Expect(response.Code).To(Equal(http.StatusOK))
+		})
+
+		It("should return a status 422 when passed an invalid query", func() {
+			Request("POST", "/streams/coalesce", "")
+			logResponse(response)
+
+			Expect(response.Code).To(Equal(422))
 		})
 
 		// 	It("should return a status 200 with no args", func() {
