@@ -39,10 +39,98 @@ var _ = Describe("StreamController", func() {
 			logResponse(response)
 
 			Expect(response.Code).To(Equal(http.StatusCreated))
+			//TODO Verify it tries to add to the StreamService
 		})
 
-		It("should attempt to add the content item to the streamservice", func() {
-			//todo
+		It("should return a status 201 when passed a correct body string", func() {
+			jsonStr := `[
+				{
+					"id":"b8623503-fa3b-4559-9d45-0571a76a98b3",
+					"ts":"2015-11-16T11:59:29.313068869-07:00",
+					"type":0,
+					"stream_id":"3b1ded01-99ed-4326-9d0b-20127104a2cb"
+				},
+				{
+					"id":"c8f17401-62d0-444c-a5d6-639b01f6070f",
+					"ts":"2015-11-16T11:59:29.313068877-07:00",
+					"type":1,
+					"stream_id":"3b1ded01-99ed-4326-9d0b-20127104a2cb"
+				}
+			]`
+
+			Request("PUT", "/streams", jsonStr)
+			logResponse(response)
+
+			Expect(response.Code).To(Equal(http.StatusCreated))
+		})
+
+		It("should return a status 422 when passed an invalid uuid", func() {
+			jsonStr := `[
+				{
+					"id":"ABC",
+					"ts":"2015-11-16T11:59:29.313068869-07:00",
+					"type":0,
+					"stream_id":"3b1ded01-99ed-4326-9d0b-20127104a2cb"
+				}
+			]`
+
+			Request("PUT", "/streams", jsonStr)
+			logResponse(response)
+
+			Expect(response.Code).To(Equal(422))
+		})
+
+		It("should return a status 422 when passed an invalid date (non ISO8601)", func() {
+			jsonStr := `[
+				{
+					"id":"b8623503-fa3b-4559-9d45-0571a76a98b3",
+					"ts":"2015-11-16",
+					"type":0,
+					"stream_id":"3b1ded01-99ed-4326-9d0b-20127104a2cb"
+				}
+			]`
+
+			Request("PUT", "/streams", jsonStr)
+			logResponse(response)
+
+			Expect(response.Code).To(Equal(422))
+		})
+		It("should return a status 422 when passed an invalid type", func() {
+			jsonStr := `[
+				{
+					"id":"b8623503-fa3b-4559-9d45-0571a76a98b3",
+					"ts":"2015-11-16T11:59:29.313068869-07:00",
+					"type":a,
+					"stream_id":"3b1ded01-99ed-4326-9d0b-20127104a2cb"
+				}
+			]`
+
+			Request("PUT", "/streams", jsonStr)
+			logResponse(response)
+
+			Expect(response.Code).To(Equal(422))
+		})
+
+		It("should return a status 422 when validation error is in later element", func() {
+			jsonStr := `[
+				{
+					"id":"b8623503-fa3b-4559-9d45-0571a76a98b3",
+					"ts":"2015-11-16T11:59:29.313068869-07:00",
+					"type":0,
+					"stream_id":"3b1ded01-99ed-4326-9d0b-20127104a2cb"
+				},
+				{
+					"id":"c8f17401-62d0-444c-a5d6-639b01f6070f",
+					"ts":"2015-11-16T11:59:29.313068877-07:00",
+					"type":a,
+					"stream_id":"3b1ded01-99ed-4326-9d0b-20127104a2cb"
+				}
+			]`
+
+			Request("PUT", "/streams", jsonStr)
+			logResponse(response)
+
+			Expect(response.Code).To(Equal(422))
 		})
 
 		It("should return a status 422 when passed an invalid body/query", func() {
