@@ -1,8 +1,11 @@
 package controllers_test
 
 import (
+	"encoding/json"
 	"net/http"
+	"time"
 
+	"github.com/ello/ello-go/streams/controllers"
 	"github.com/m4rw3r/uuid"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -18,8 +21,21 @@ var _ = Describe("StreamController", func() {
 	Context("when adding content via PUT /streams", func() {
 
 		It("should return a status 201 when passed a correct body", func() {
-
-			Request("PUT", "/streams", "hi")
+			item1ID, _ := uuid.V4()
+			item2ID, _ := uuid.V4()
+			items := []controllers.StreamItem{{
+				StreamID:  id,
+				Timestamp: time.Now(),
+				Type:      0,
+				ID:        item1ID,
+			}, {
+				StreamID:  id,
+				Timestamp: time.Now(),
+				Type:      1,
+				ID:        item2ID,
+			}}
+			itemsJSON, _ := json.Marshal(items)
+			Request("PUT", "/streams", string(itemsJSON))
 			logResponse(response)
 
 			Expect(response.Code).To(Equal(http.StatusCreated))

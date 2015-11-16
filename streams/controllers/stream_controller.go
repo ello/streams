@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"encoding/json"
 	"errors"
 	"io/ioutil"
 	"net/http"
@@ -16,6 +17,7 @@ type streamController struct {
 	baseController
 }
 
+// TODO Move all of the stream item stuff to its own file, probably in a data pkg
 type streamItemType int
 
 const (
@@ -76,6 +78,17 @@ func (c *streamController) addToStream(w http.ResponseWriter, r *http.Request, p
 	log.WithFields(fieldsFor(r, body, err)).Debug("/addToStream")
 
 	// do stuff
+	var items []StreamItem
+	err = json.Unmarshal(body, &items)
+
+	log.WithFields(log.Fields{
+		"items": items,
+		"err":   err,
+	}).Debug("Unmarshaled items")
+
+	if err != nil {
+		return common.StatusError{Code: 422, Err: errors.New("body must be an array of StreamItems")}
+	}
 
 	c.JSON(w, http.StatusCreated, nil)
 	return nil
