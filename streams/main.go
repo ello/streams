@@ -4,14 +4,14 @@ import (
 	"net/http"
 
 	"github.com/ello/ello-go/common/util"
-	"github.com/ello/ello-go/streams/controllers"
+	"github.com/ello/ello-go/streams/api"
 	"github.com/julienschmidt/httprouter"
 )
 
 func main() {
 	router := httprouter.New()
 
-	streamsController := controllers.NewStreamController()
+	streamsController := api.NewStreamController()
 
 	// controllers register their routes with the router
 	streamsController.Register(router)

@@ -1,4 +1,4 @@
-package controllers_test
+package api_test
 
 import (
 	"net/http"
@@ -6,7 +6,7 @@ import (
 	"strings"
 
 	log "github.com/Sirupsen/logrus"
-	"github.com/ello/ello-go/streams/controllers"
+	"github.com/ello/ello-go/streams/api"
 	"github.com/julienschmidt/httprouter"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -60,7 +60,7 @@ var _ = BeforeSuite(func() {
 
 	router = httprouter.New()
 
-	streamController := controllers.NewStreamController()
+	streamController := api.NewStreamController()
 
 	streamController.Register(router)
 })

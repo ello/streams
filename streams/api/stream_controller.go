@@ -1,4 +1,4 @@
-package controllers
+package api
 
 import (
 	"encoding/json"
@@ -90,6 +90,7 @@ func (c *streamController) addToStream(w http.ResponseWriter, r *http.Request, p
 	log.WithFields(fieldsFor(r, body, err)).Debug("/addToStream")
 
 	// do stuff
+
 	var items []StreamItem
 	err = json.Unmarshal(body, &items)
 
