@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"net/http"
 
 	log "github.com/Sirupsen/logrus"
@@ -12,19 +11,27 @@ import (
 )
 
 func main() {
-	router := httprouter.New()
+	log.SetLevel(log.DebugLevel)
 
 	streamsService, err := service.NewRoshiStreamService("http://localhost:6302")
 	if err != nil {
 		log.Panic(err)
-		panic(1)
 	}
+
+	router := httprouter.New()
+
+	router.GET("/test", httprouter.Handle(func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+		log.Debug("test")
+		w.Write([]byte("test ack!"))
+	}))
+
 	streamsController := api.NewStreamController(streamsService)
 
 	// controllers register their routes with the router
 	streamsController.Register(router)
 
 	port := util.GetEnvWithDefault("ELLO_API_PORT", "8080")
-	fmt.Println("Listening on port: " + port)
-	http.ListenAndServe(":"+port, router)
+	serverAt := "localhost:" + port
+	log.Debugf("Listening at: %v", serverAt)
+	http.ListenAndServe(serverAt, router)
 }
