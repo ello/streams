@@ -46,8 +46,8 @@ func (c *streamController) coalesceStreams(w http.ResponseWriter, r *http.Reques
 	if err != nil {
 		return common.StatusError{Code: 400, Err: errors.New("An error occurred loading streams")}
 	}
-	c.JSON(w, http.StatusOK, items)
 
+	c.JSON(w, http.StatusOK, items)
 	return nil
 }
 
@@ -63,8 +63,8 @@ func (c *streamController) getStream(w http.ResponseWriter, r *http.Request, ps 
 	if err != nil {
 		return common.StatusError{Code: 400, Err: errors.New("An error occurred loading streams")}
 	}
-	c.JSON(w, http.StatusOK, items)
 
+	c.JSON(w, http.StatusOK, items)
 	return nil
 }
 
@@ -87,7 +87,7 @@ func (c *streamController) addToStream(w http.ResponseWriter, r *http.Request, p
 	err = c.service.AddContent(items)
 
 	if err != nil {
-		return common.StatusError{Code: 400, Err: errors.New("An error occurred loading streams")}
+		return common.StatusError{Code: 400, Err: errors.New("An error occurred adding to the stream(s)")}
 	}
 
 	c.JSON(w, http.StatusCreated, nil)

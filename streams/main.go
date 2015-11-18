@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"net/http"
 
 	log "github.com/Sirupsen/logrus"
@@ -24,5 +25,6 @@ func main() {
 	streamsController.Register(router)
 
 	port := util.GetEnvWithDefault("ELLO_API_PORT", "8080")
+	fmt.Println("Listening on port: " + port)
 	http.ListenAndServe(":"+port, router)
 }
