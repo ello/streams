@@ -61,9 +61,9 @@ var _ = Describe("Roshi Channel Service", func() {
 				err := s.AddContent(items)
 				Expect(err).To(BeNil())
 
-				itemID, _ := uuid.V4()
+				fakeChanID, _ := uuid.V4()
 				q := model.StreamQuery{
-					Streams: []uuid.UUID{itemID, chanID},
+					Streams: []uuid.UUID{fakeChanID, chanID},
 				}
 
 				c, _ := s.LoadContent(q)
