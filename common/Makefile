@@ -28,7 +28,7 @@ lint:
 
 fmt:export GO15VENDOREXPERIMENT=1
 fmt:
-	@gofmt -s -w `glide nv | sed 's/\.\.\./*.go /g'`
+	@gofmt -s -w `glide nv | sed 's/\.\.\./*.go/g' | sed 's/.\///'`
 	@$(PRINT_OK)
 
 test:export GO15VENDOREXPERIMENT=1

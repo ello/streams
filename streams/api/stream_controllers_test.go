@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/ello/ello-go/streams/api"
+	"github.com/ello/ello-go/streams/model"
 	"github.com/m4rw3r/uuid"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -23,7 +23,7 @@ var _ = Describe("StreamController", func() {
 		It("should return a status 201 when passed a correct body", func() {
 			item1ID, _ := uuid.V4()
 			item2ID, _ := uuid.V4()
-			items := []api.StreamItem{{
+			items := []model.StreamItem{{
 				StreamID:  id,
 				Timestamp: time.Now(),
 				Type:      0,
@@ -160,7 +160,7 @@ var _ = Describe("StreamController", func() {
 	Context("when retrieving streams via /streams/coalesce", func() {
 
 		It("should return a status 200 with a valid query string", func() {
-			q := api.StreamQuery{
+			q := model.StreamQuery{
 				Streams: []uuid.UUID{id},
 			}
 			json, _ := json.Marshal(q)

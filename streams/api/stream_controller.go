@@ -9,35 +9,13 @@ import (
 
 	log "github.com/Sirupsen/logrus"
 	common "github.com/ello/ello-go/common/http"
+	"github.com/ello/ello-go/streams/model"
 	"github.com/julienschmidt/httprouter"
 	"github.com/m4rw3r/uuid"
 )
 
 type streamController struct {
 	baseController
-}
-
-// TODO Move all of the stream item stuff to its own file, probably in a data pkg
-type streamItemType int
-
-const (
-	//POST is a type of stream item which is a direct post
-	POST streamItemType = iota
-	//REPOST is a type of stream item which represents a repost
-	REPOST
-)
-
-//StreamItem represents a single item on a stream
-type StreamItem struct {
-	ID        uuid.UUID      `json:"id"`
-	Timestamp time.Time      `json:"ts"`
-	Type      streamItemType `json:"type"`
-	StreamID  uuid.UUID      `json:"stream_id"`
-}
-
-//StreamQuery represents a query for multiple streams
-type StreamQuery struct {
-	Streams []uuid.UUID `json:"streams"`
 }
 
 //NewStreamController is the exported constructor for a streams controller
@@ -57,7 +35,7 @@ func (c *streamController) coalesceStreams(w http.ResponseWriter, r *http.Reques
 	body, err := ioutil.ReadAll(r.Body)
 	log.WithFields(fieldsFor(r, body, err)).Debug("/coalesce")
 
-	var query StreamQuery
+	var query model.StreamQuery
 	err = json.Unmarshal(body, &query)
 
 	if err != nil {
@@ -91,7 +69,7 @@ func (c *streamController) addToStream(w http.ResponseWriter, r *http.Request, p
 
 	// do stuff
 
-	var items []StreamItem
+	var items []model.StreamItem
 	err = json.Unmarshal(body, &items)
 
 	log.WithFields(log.Fields{
@@ -107,22 +85,22 @@ func (c *streamController) addToStream(w http.ResponseWriter, r *http.Request, p
 	return nil
 }
 
-func generateFakeResponse(streamID uuid.UUID) []StreamItem {
+func generateFakeResponse(streamID uuid.UUID) []model.StreamItem {
 	//fake data
 	uuid1, _ := uuid.V4()
 	uuid2, _ := uuid.V4()
 
-	return []StreamItem{
+	return []model.StreamItem{
 		{
 			ID:        uuid1,
 			Timestamp: time.Now(),
-			Type:      POST,
+			Type:      model.TypePost,
 			StreamID:  streamID,
 		},
 		{
 			ID:        uuid2,
 			Timestamp: time.Now(),
-			Type:      REPOST,
+			Type:      model.TypeRepost,
 			StreamID:  streamID,
 		},
 	}
