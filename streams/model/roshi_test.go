@@ -13,7 +13,7 @@ import (
 )
 
 func TestMain(m *testing.M) {
-	log.SetLevel(log.WarnLevel)
+	log.SetLevel(log.DebugLevel)
 
 	retCode := m.Run()
 

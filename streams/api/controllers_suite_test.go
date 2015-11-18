@@ -56,7 +56,7 @@ func Request(method string, route string, body string) {
 }
 
 var _ = BeforeSuite(func() {
-	log.SetLevel(log.WarnLevel)
+	log.SetLevel(log.DebugLevel)
 
 	router = httprouter.New()
 
