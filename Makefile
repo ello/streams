@@ -14,10 +14,13 @@ setup: announce get-tools
 	@cd streams && $(MAKE) setup
 
 get-tools:
+	@brew rm --force fswatch readline glide > /dev/null 2>&1
 	@brew install fswatch readline glide > /dev/null 2>&1
 	@go get -u "github.com/alecthomas/gometalinter" > /dev/null 2>&1
-	@gometalinter --install --update --force > /dev/null 2>&1
-	@$(PRINT_OK)
+	#TODO allow once PR is accepted (https://github.com/alecthomas/gometalinter/pull/67)
+	#gometalinter --install --update --force --vendor > /dev/null 2>&1
+	@go get github.com/remyoudompheng/go-misc/deadcode github.com/alecthomas/gocyclo github.com/gordonklaus/ineffassign github.com/mibk/dupl github.com/golang/lint/golint golang.org/x/tools/cmd/gotype golang.org/x/tools/cmd/goimports github.com/opennota/check/cmd/aligncheck github.com/opennota/check/cmd/structcheck github.com/alecthomas/gometalinter github.com/kisielk/errcheck  github.com/opennota/check/cmd/varcheck
+	$(PRINT_OK)
 
 # db-setup:
 # 	@echo "=== setup db ==="

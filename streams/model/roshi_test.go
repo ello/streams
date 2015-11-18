@@ -21,7 +21,6 @@ func TestMain(m *testing.M) {
 }
 
 func TestJsonMarshal(t *testing.T) {
-
 	id, _ := uuid.V4()
 	item := model.StreamItem{
 		StreamID:  id,

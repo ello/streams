@@ -67,10 +67,10 @@ func (c *streamController) addToStream(w http.ResponseWriter, r *http.Request, p
 	body, err := ioutil.ReadAll(r.Body)
 	log.WithFields(fieldsFor(r, body, err)).Debug("/addToStream")
 
-	// do stuff
-
 	var items []model.StreamItem
 	err = json.Unmarshal(body, &items)
+
+	// do stuff
 
 	log.WithFields(log.Fields{
 		"items": items,

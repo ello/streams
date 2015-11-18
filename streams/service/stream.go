@@ -2,7 +2,7 @@ package service
 
 import "github.com/ello/ello-go/streams/model"
 
-// StreamService does shit
+// StreamService is the interface to the underlying stream storage system.
 type StreamService interface {
 	AddContent(items []model.StreamItem) error
 }
