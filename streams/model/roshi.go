@@ -2,6 +2,7 @@ package model
 
 import (
 	"encoding/json"
+	"time"
 
 	"github.com/m4rw3r/uuid"
 )
@@ -12,9 +13,9 @@ type roshiMember struct {
 }
 
 type roshiInsert struct {
-	Key    []byte  `json:"key"`
-	Score  float64 `json:"score"`
-	Member []byte  `json:"member"`
+	Key    []byte `json:"key"`
+	Score  int64  `json:"score"`
+	Member []byte `json:"member"`
 }
 
 //RoshiStreamItem shadows StreamItem to allow us to export the json Roshi expects
@@ -28,14 +29,37 @@ func (item RoshiStreamItem) MarshalJSON() ([]byte, error) {
 	})
 	return json.Marshal(&roshiInsert{
 		Key:    []byte(item.StreamID.String()),
-		Score:  float64(item.Timestamp.UnixNano()),
+		Score:  item.Timestamp.UnixNano(),
 		Member: []byte(member),
 	})
 }
 
 //UnmarshalJSON correct converts a roshi json blob back to RoshiStreamItem
 func (item *RoshiStreamItem) UnmarshalJSON(data []byte) error {
-	return nil
+	var jsonItem roshiInsert
+	err := json.Unmarshal(data, &jsonItem)
+	if err == nil {
+		//unpack the streamID back to a UUID
+		streamID, innerErr := uuid.FromString(string(jsonItem.Key))
+		if innerErr != nil {
+			return innerErr
+		}
+
+		//unpack the body of the record for the id and type
+		var member roshiMember
+		innerErr = json.Unmarshal(jsonItem.Member, &member)
+		if innerErr != nil {
+			return innerErr
+		}
+
+		//set the values
+		item.StreamID = streamID
+		item.Timestamp = time.Unix(0, jsonItem.Score)
+		item.Type = member.Type
+		item.ID = member.ID
+
+	}
+	return err
 }
 
 //MarshalRoshi converts a slice of StreamItems into a slice of RoshiStreamItems
