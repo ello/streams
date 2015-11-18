@@ -31,7 +31,7 @@ type roshiStreamService struct {
 }
 
 func (s roshiStreamService) AddContent(items []model.StreamItem) error {
-	rItems, err := model.MarshalRoshi(items)
+	rItems, err := model.ToRoshiStreamItem(items)
 	if err != nil {
 		log.Error(err)
 		return err
@@ -73,14 +73,72 @@ func (s roshiStreamService) AddContent(items []model.StreamItem) error {
 
 	defer resp.Body.Close()
 
-	ioutil.ReadAll(resp.Body)
-
 	if resp.StatusCode != 200 {
 		debug(httputil.DumpResponse(resp, true))
 		return errors.New("Request Failed with status: " + string(resp.StatusCode))
 	}
 
 	return nil
+}
+
+func (s roshiStreamService) LoadContent(query model.StreamQuery) ([]model.StreamItem, error) {
+	requestBody, err := json.Marshal(model.RoshiQuery(query))
+	if err != nil {
+		log.Error(err)
+		return nil, err
+	}
+
+	uri := s.url.String() + "?coalesce=true"
+
+	log.WithFields(log.Fields{
+		"Body": string(requestBody),
+		"URL":  uri,
+	}).Debug("Preparing to make request")
+
+	req, err := http.NewRequest("GET", uri, bytes.NewBuffer(requestBody))
+	if log.GetLevel() >= log.DebugLevel {
+		debug(httputil.DumpRequestOut(req, true))
+	}
+
+	if err != nil {
+		log.Error(err)
+		return nil, err
+	}
+	client := &http.Client{}
+	log.WithFields(log.Fields{
+		"client": client,
+		"req":    req,
+	}).Debug("About to execute")
+
+	resp, err := client.Do(req)
+	if err != nil {
+		log.Error(err)
+		return nil, err
+	}
+
+	defer resp.Body.Close()
+
+	data, err := ioutil.ReadAll(resp.Body)
+	if resp.StatusCode != 200 || err != nil {
+		debug(httputil.DumpResponse(resp, true))
+		return nil, errors.New("Request Failed with status: " + string(resp.StatusCode))
+	}
+
+	var result model.RoshiResponse
+	err = json.Unmarshal(data, &result)
+	if err != nil {
+		log.Error(err)
+		return nil, err
+	}
+
+	log.WithFields(log.Fields{
+		"Status":   resp.StatusCode,
+		"Duration": result.Duration,
+		"Records":  result.Items,
+		"Raw":      string(data),
+	}).Debug("Execution complete")
+
+	return model.ToStreamItem(result.Items)
 }
 
 func debug(data []byte, err error) {

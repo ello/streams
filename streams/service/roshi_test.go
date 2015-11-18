@@ -25,24 +25,16 @@ var _ = Describe("Roshi Channel Service", func() {
 		s, _ = service.NewRoshiStreamService("http://localhost:6302")
 	})
 
-	AfterEach(func() {
-
-	})
-
-	It("is sane", func() {
-		Expect(true).Should(BeTrue())
-	})
-
 	Context(".AddToChannel", func() {
 		It("will add a single content item", func() {
 			chanID, _ := uuid.V4()
 			contentID, _ := uuid.V4()
 
 			content := model.StreamItem{
-				ID:        chanID,
+				ID:        contentID,
 				Timestamp: time.Now(),
 				Type:      model.TypePost,
-				StreamID:  contentID,
+				StreamID:  chanID,
 			}
 			items := []model.StreamItem{
 				content,
@@ -52,20 +44,31 @@ var _ = Describe("Roshi Channel Service", func() {
 			Expect(err).To(BeNil())
 		})
 
-		// Context(".LoadChannel", func() {
-		// 	It("Load content previously added to the channel", func() {
-		// 		chanID, _ := uuid.V4()
-		// 		contentID, _ := uuid.V4()
-		// 		content := data.Content{
-		// 			ID:        contentID,
-		// 			CreatedAt: time.Now(),
-		// 		}
-		//
-		// 		s.AddToChannel(chanID, content)
-		//
-		// 		contentIDs, _ := s.LoadChannel(chanID)
-		// 		Expect(contentIDs).NotTo(BeEmpty())
-		// 	})
-		// })
+		Context(".LoadChannel", func() {
+			It("Load content previously added to the channel", func() {
+				chanID, _ := uuid.V4()
+				contentID, _ := uuid.V4()
+
+				content := model.StreamItem{
+					ID:        contentID,
+					Timestamp: time.Now(),
+					Type:      model.TypePost,
+					StreamID:  chanID,
+				}
+				items := []model.StreamItem{
+					content,
+				}
+				err := s.AddContent(items)
+				Expect(err).To(BeNil())
+
+				itemID, _ := uuid.V4()
+				q := model.StreamQuery{
+					Streams: []uuid.UUID{itemID, chanID},
+				}
+
+				contentIDs, _ := s.LoadContent(q)
+				Expect(contentIDs).NotTo(BeEmpty())
+			})
+		})
 	})
 })

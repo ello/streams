@@ -9,9 +9,7 @@ import (
 )
 
 var _ = BeforeSuite(func() {
-	//Set log level for this suite
 	log.SetLevel(log.DebugLevel)
-
 })
 
 func TestControllers(t *testing.T) {

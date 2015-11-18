@@ -12,14 +12,24 @@ type roshiMember struct {
 	Type StreamItemType `json:"type"`
 }
 
+//TODO Change name to something more appropriate
 type roshiInsert struct {
-	Key    []byte `json:"key"`
-	Score  int64  `json:"score"`
-	Member []byte `json:"member"`
+	Key    []byte  `json:"key"`
+	Score  float64 `json:"score"`
+	Member []byte  `json:"member"`
+}
+
+//RoshiResponse represents the response from a Query
+type RoshiResponse struct {
+	Duration string            `json:"duration"`
+	Items    []RoshiStreamItem `json:"records"`
 }
 
 //RoshiStreamItem shadows StreamItem to allow us to export the json Roshi expects
 type RoshiStreamItem StreamItem
+
+//RoshiQuery shadows a StreamItem to allow us to export the json Roshi expects
+type RoshiQuery StreamQuery
 
 // MarshalJSON converts from a RoshiStreamItem to the expected json for Roshi
 func (item RoshiStreamItem) MarshalJSON() ([]byte, error) {
@@ -29,7 +39,7 @@ func (item RoshiStreamItem) MarshalJSON() ([]byte, error) {
 	})
 	return json.Marshal(&roshiInsert{
 		Key:    []byte(item.StreamID.String()),
-		Score:  item.Timestamp.UnixNano(),
+		Score:  float64(item.Timestamp.UnixNano()),
 		Member: []byte(member),
 	})
 }
@@ -54,7 +64,7 @@ func (item *RoshiStreamItem) UnmarshalJSON(data []byte) error {
 
 		//set the values
 		item.StreamID = streamID
-		item.Timestamp = time.Unix(0, jsonItem.Score)
+		item.Timestamp = time.Unix(0, int64(jsonItem.Score))
 		item.Type = member.Type
 		item.ID = member.ID
 
@@ -62,8 +72,17 @@ func (item *RoshiStreamItem) UnmarshalJSON(data []byte) error {
 	return err
 }
 
-//MarshalRoshi converts a slice of StreamItems into a slice of RoshiStreamItems
-func MarshalRoshi(items []StreamItem) ([]RoshiStreamItem, error) {
+//MarshalJSON takes a roshiquery and creates a list of base64 encoded bytes
+func (q RoshiQuery) MarshalJSON() ([]byte, error) {
+	ids := make([][]byte, len(q.Streams))
+	for i := 0; i < len(q.Streams); i++ {
+		ids[i] = []byte(q.Streams[i].String())
+	}
+	return json.Marshal(ids)
+}
+
+//ToRoshiStreamItem converts a slice of StreamItems into a slice of RoshiStreamItems
+func ToRoshiStreamItem(items []StreamItem) ([]RoshiStreamItem, error) {
 	rItems := make([]RoshiStreamItem, len(items))
 	for i := 0; i < len(items); i++ {
 		rItems[i] = RoshiStreamItem(items[i])
@@ -71,8 +90,8 @@ func MarshalRoshi(items []StreamItem) ([]RoshiStreamItem, error) {
 	return rItems, nil
 }
 
-//UnmarshalRoshi converts a slice of RoshiStreamItems to a slice of StreamItems
-func UnmarshalRoshi(rItems []RoshiStreamItem) ([]StreamItem, error) {
+//ToStreamItem converts a slice of RoshiStreamItems to a slice of StreamItems
+func ToStreamItem(rItems []RoshiStreamItem) ([]StreamItem, error) {
 	items := make([]StreamItem, len(rItems))
 	for i := 0; i < len(rItems); i++ {
 		items[i] = StreamItem(rItems[i])

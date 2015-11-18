@@ -23,8 +23,11 @@ func TestMain(m *testing.M) {
 func TestJsonMarshal(t *testing.T) {
 	id, _ := uuid.V4()
 	item := model.StreamItem{
-		StreamID:  id,
-		Timestamp: time.Now(),
+		StreamID: id,
+		// NOTE:  Converting between int64/float64 at the nanosecond level can
+		//				create some tiny drift. In practice, this is fine.  Rounding to
+		//				the second level avoids issues with testing.
+		Timestamp: time.Now().Round(time.Second),
 		Type:      0,
 		ID:        id,
 	}
@@ -63,7 +66,7 @@ func TestJsonMarshal(t *testing.T) {
 		item,
 		item,
 	}
-	rItems, _ := model.MarshalRoshi(items)
+	rItems, _ := model.ToRoshiStreamItem(items)
 	output3, _ := json.Marshal(rItems)
 	var fromJSON3 []model.RoshiStreamItem
 	err = json.Unmarshal(output3, &fromJSON3)
