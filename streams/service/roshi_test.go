@@ -66,8 +66,14 @@ var _ = Describe("Roshi Channel Service", func() {
 					Streams: []uuid.UUID{itemID, chanID},
 				}
 
-				contentIDs, _ := s.LoadContent(q)
-				Expect(contentIDs).NotTo(BeEmpty())
+				c, _ := s.LoadContent(q)
+				Expect(c).NotTo(BeEmpty())
+				Expect(len(c)).To(Equal(1))
+				c1 := c[0]
+				Expect(c1.StreamID).To(Equal(content.StreamID))
+				Expect(c1.ID).To(Equal(content.ID))
+				Expect(c1.Type).To(Equal(content.Type))
+				Expect(c1.Timestamp).To(BeTemporally("~", content.Timestamp, time.Millisecond))
 			})
 		})
 	})
