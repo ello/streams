@@ -4,7 +4,10 @@ import "github.com/ello/ello-go/streams/model"
 
 // StreamService is the interface to the underlying stream storage system.
 type StreamService interface {
-	//TODO don't love these names
-	AddContent(items []model.StreamItem) error
-	LoadContent(query model.StreamQuery) ([]model.StreamItem, error)
+
+	//Add will add the content items to the embedded stream id
+	Add(items []model.StreamItem) error
+
+	//Load will pull a coalesced view of the streams in the query
+	Load(query model.StreamQuery) ([]model.StreamItem, error)
 }

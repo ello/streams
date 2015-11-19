@@ -39,7 +39,9 @@ var _ = Describe("StreamController", func() {
 			logResponse(response)
 
 			Expect(response.Code).To(Equal(http.StatusCreated))
-			//TODO Verify it tries to add to the StreamService
+
+			//verify the items passed into the service are the same
+			checkAll(streamService.lastItemsOnAdd, items)
 		})
 
 		It("should return a status 201 when passed a correct body string", func() {

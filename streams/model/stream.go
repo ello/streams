@@ -6,7 +6,7 @@ import (
 	"github.com/m4rw3r/uuid"
 )
 
-// StreamItemType does stuff
+// StreamItemType represents the type of stream an item is in
 type StreamItemType int
 
 const (

@@ -20,21 +20,24 @@ import (
 var StreamID uuid.UUID
 
 type mockStreamService struct {
-	internal []model.StreamItem
+	internal       []model.StreamItem
+	lastItemsOnAdd []model.StreamItem
 }
 
-func (s mockStreamService) AddContent(items []model.StreamItem) error {
+func (s mockStreamService) Add(items []model.StreamItem) error {
+	s.lastItemsOnAdd = items
 	s.internal = append(s.internal, items...)
 	return nil
 }
 
-func (s mockStreamService) LoadContent(query model.StreamQuery) ([]model.StreamItem, error) {
+func (s mockStreamService) Load(query model.StreamQuery) ([]model.StreamItem, error) {
 	return s.internal, nil
 }
 
 var (
-	router   *httprouter.Router
-	response *httptest.ResponseRecorder
+	router        *httprouter.Router
+	response      *httptest.ResponseRecorder
+	streamService mockStreamService
 )
 
 func Request(method string, route string, body string) {
@@ -59,7 +62,7 @@ var _ = BeforeSuite(func() {
 
 	StreamID, _ := uuid.V4()
 
-	streamService := mockStreamService{
+	streamService = mockStreamService{
 		internal: generateFakeResponse(StreamID),
 	}
 	streamController := api.NewStreamController(streamService)
@@ -99,4 +102,19 @@ func logResponse(r *httptest.ResponseRecorder) {
 		"headers": r.HeaderMap,
 		"body":    r.Body.String(),
 	}).Debug("Got Response")
+}
+
+func checkStreamItems(c model.StreamItem, c1 model.StreamItem) {
+	Expect(c).NotTo(BeNil())
+	Expect(c1).NotTo(BeNil())
+	Expect(c1.StreamID).To(Equal(c.StreamID))
+	Expect(c1.ID).To(Equal(c.ID))
+	Expect(c1.Type).To(Equal(c.Type))
+	Expect(c1.Timestamp).To(BeTemporally("~", c.Timestamp, time.Millisecond))
+}
+
+func checkAll(c []model.StreamItem, c1 []model.StreamItem) {
+	for i := 0; i < len(c); i++ {
+		checkStreamItems(c[i], c1[i])
+	}
 }

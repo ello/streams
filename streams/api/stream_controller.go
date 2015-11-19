@@ -16,12 +16,12 @@ import (
 
 type streamController struct {
 	baseController
-	service service.StreamService
+	streamService service.StreamService
 }
 
 //NewStreamController is the exported constructor for a streams controller
 func NewStreamController(service service.StreamService) Controller {
-	return &streamController{service: service}
+	return &streamController{streamService: service}
 }
 
 func (c *streamController) Register(router *httprouter.Router) {
@@ -42,7 +42,7 @@ func (c *streamController) coalesceStreams(w http.ResponseWriter, r *http.Reques
 	if err != nil {
 		return common.StatusError{Code: 422, Err: err}
 	}
-	items, err := c.service.LoadContent(query)
+	items, err := c.streamService.Load(query)
 	if err != nil {
 		return common.StatusError{Code: 400, Err: errors.New("An error occurred loading streams")}
 	}
@@ -59,7 +59,7 @@ func (c *streamController) getStream(w http.ResponseWriter, r *http.Request, ps 
 	if err != nil && !streamID.IsZero() {
 		return common.StatusError{Code: 422, Err: errors.New("id must be a valid UUID")}
 	}
-	items, err := c.service.LoadContent(model.StreamQuery{Streams: []uuid.UUID{streamID}})
+	items, err := c.streamService.Load(model.StreamQuery{Streams: []uuid.UUID{streamID}})
 	if err != nil {
 		return common.StatusError{Code: 400, Err: errors.New("An error occurred loading streams")}
 	}
@@ -84,7 +84,7 @@ func (c *streamController) addToStream(w http.ResponseWriter, r *http.Request, p
 		return common.StatusError{Code: 422, Err: errors.New("body must be an array of StreamItems")}
 	}
 
-	err = c.service.AddContent(items)
+	err = c.streamService.Add(items)
 
 	if err != nil {
 		return common.StatusError{Code: 400, Err: errors.New("An error occurred adding to the stream(s)")}

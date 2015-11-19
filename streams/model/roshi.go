@@ -7,13 +7,12 @@ import (
 	"github.com/m4rw3r/uuid"
 )
 
-type roshiMember struct {
+type roshiBody struct {
 	ID   uuid.UUID      `json:"content_id"`
 	Type StreamItemType `json:"type"`
 }
 
-//TODO Change name to something more appropriate
-type roshiInsert struct {
+type roshiItem struct {
 	Key    []byte  `json:"key"`
 	Score  float64 `json:"score"`
 	Member []byte  `json:"member"`
@@ -33,11 +32,11 @@ type RoshiQuery StreamQuery
 
 // MarshalJSON converts from a RoshiStreamItem to the expected json for Roshi
 func (item RoshiStreamItem) MarshalJSON() ([]byte, error) {
-	member, _ := json.Marshal(&roshiMember{
+	member, _ := json.Marshal(&roshiBody{
 		ID:   item.ID,
 		Type: item.Type,
 	})
-	return json.Marshal(&roshiInsert{
+	return json.Marshal(&roshiItem{
 		Key:    []byte(item.StreamID.String()),
 		Score:  float64(item.Timestamp.UnixNano()),
 		Member: []byte(member),
@@ -46,7 +45,7 @@ func (item RoshiStreamItem) MarshalJSON() ([]byte, error) {
 
 //UnmarshalJSON correct converts a roshi json blob back to RoshiStreamItem
 func (item *RoshiStreamItem) UnmarshalJSON(data []byte) error {
-	var jsonItem roshiInsert
+	var jsonItem roshiItem
 	err := json.Unmarshal(data, &jsonItem)
 	if err == nil {
 		//unpack the streamID back to a UUID
@@ -56,7 +55,7 @@ func (item *RoshiStreamItem) UnmarshalJSON(data []byte) error {
 		}
 
 		//unpack the body of the record for the id and type
-		var member roshiMember
+		var member roshiBody
 		innerErr = json.Unmarshal(jsonItem.Member, &member)
 		if innerErr != nil {
 			return innerErr

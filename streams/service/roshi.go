@@ -30,7 +30,7 @@ type roshiStreamService struct {
 	url *url.URL
 }
 
-func (s roshiStreamService) AddContent(items []model.StreamItem) error {
+func (s roshiStreamService) Add(items []model.StreamItem) error {
 	rItems, err := model.ToRoshiStreamItem(items)
 	if err != nil {
 		log.Error(err)
@@ -81,7 +81,7 @@ func (s roshiStreamService) AddContent(items []model.StreamItem) error {
 	return nil
 }
 
-func (s roshiStreamService) LoadContent(query model.StreamQuery) ([]model.StreamItem, error) {
+func (s roshiStreamService) Load(query model.StreamQuery) ([]model.StreamItem, error) {
 	requestBody, err := json.Marshal(model.RoshiQuery(query))
 	if err != nil {
 		log.Error(err)

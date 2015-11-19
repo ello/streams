@@ -25,7 +25,7 @@ var _ = Describe("Roshi Channel Service", func() {
 		s, _ = service.NewRoshiStreamService("http://localhost:6302")
 	})
 
-	Context(".AddToChannel", func() {
+	Context(".Add", func() {
 		It("will add a single content item", func() {
 			chanID, _ := uuid.V4()
 			contentID, _ := uuid.V4()
@@ -40,11 +40,11 @@ var _ = Describe("Roshi Channel Service", func() {
 				content,
 			}
 			Expect(s).NotTo(BeNil())
-			err := s.AddContent(items)
+			err := s.Add(items)
 			Expect(err).To(BeNil())
 		})
 
-		Context(".LoadChannel", func() {
+		Context(".Load", func() {
 			It("Load content previously added to the channel", func() {
 				chanID, _ := uuid.V4()
 				contentID, _ := uuid.V4()
@@ -58,7 +58,7 @@ var _ = Describe("Roshi Channel Service", func() {
 				items := []model.StreamItem{
 					content,
 				}
-				err := s.AddContent(items)
+				err := s.Add(items)
 				Expect(err).To(BeNil())
 
 				fakeChanID, _ := uuid.V4()
@@ -66,7 +66,7 @@ var _ = Describe("Roshi Channel Service", func() {
 					Streams: []uuid.UUID{fakeChanID, chanID},
 				}
 
-				c, _ := s.LoadContent(q)
+				c, _ := s.Load(q)
 				Expect(c).NotTo(BeEmpty())
 				Expect(len(c)).To(Equal(1))
 				c1 := c[0]
