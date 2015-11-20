@@ -22,6 +22,8 @@ var StreamID uuid.UUID
 type mockStreamService struct {
 	internal       []model.StreamItem
 	lastItemsOnAdd []model.StreamItem
+	lastLimit      int
+	lastOffset     int
 }
 
 func (s mockStreamService) Add(items []model.StreamItem) error {
@@ -30,7 +32,9 @@ func (s mockStreamService) Add(items []model.StreamItem) error {
 	return nil
 }
 
-func (s mockStreamService) Load(query model.StreamQuery) ([]model.StreamItem, error) {
+func (s mockStreamService) Load(query model.StreamQuery, limit int, offset int) ([]model.StreamItem, error) {
+	s.lastLimit = limit
+	s.lastOffset = offset
 	return s.internal, nil
 }
 

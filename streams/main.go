@@ -58,7 +58,6 @@ func main() {
 	router := httprouter.New()
 
 	streamsController := api.NewStreamController(streamsService)
-	// controllers register their routes with the router
 	streamsController.Register(router)
 
 	healthController := api.NewHealthController()

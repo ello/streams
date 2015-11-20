@@ -81,7 +81,7 @@ func (s roshiStreamService) Add(items []model.StreamItem) error {
 	return nil
 }
 
-func (s roshiStreamService) Load(query model.StreamQuery) ([]model.StreamItem, error) {
+func (s roshiStreamService) Load(query model.StreamQuery, limit int, offset int) ([]model.StreamItem, error) {
 	requestBody, err := json.Marshal(model.RoshiQuery(query))
 	if err != nil {
 		log.Error(err)

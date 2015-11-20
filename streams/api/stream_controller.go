@@ -9,6 +9,7 @@ import (
 
 	log "github.com/Sirupsen/logrus"
 	common "github.com/ello/ello-go/common/http"
+	"github.com/ello/ello-go/common/util"
 	"github.com/ello/ello-go/streams/model"
 	"github.com/ello/ello-go/streams/service"
 	"github.com/julienschmidt/httprouter"
@@ -50,13 +51,23 @@ func (c *streamController) coalesceStreams(w http.ResponseWriter, r *http.Reques
 	body, err := ioutil.ReadAll(r.Body)
 	log.WithFields(fieldsFor(r, body, err)).Debug("/coalesce")
 
+	limit, err := util.ValidateInt(r.FormValue("limit"), 10)
+	if err != nil {
+		return common.StatusError{Code: 422, Err: errors.New("Limit should be a number")}
+	}
+	offset, err := util.ValidateInt(r.FormValue("offset"), 0)
+	if err != nil {
+		return common.StatusError{Code: 422, Err: errors.New("Offset should be a number")}
+	}
+
 	var query model.StreamQuery
 	err = json.Unmarshal(body, &query)
 
 	if err != nil {
 		return common.StatusError{Code: 422, Err: err}
 	}
-	items, err := c.streamService.Load(query)
+
+	items, err := c.streamService.Load(query, limit, offset)
 	if err != nil {
 		return common.StatusError{Code: 400, Err: errors.New("An error occurred loading streams")}
 	}
@@ -75,7 +86,17 @@ func (c *streamController) getStream(w http.ResponseWriter, r *http.Request, ps 
 	if err != nil && !streamID.IsZero() {
 		return common.StatusError{Code: 422, Err: errors.New("id must be a valid UUID")}
 	}
-	items, err := c.streamService.Load(model.StreamQuery{Streams: []uuid.UUID{streamID}})
+
+	limit, err := util.ValidateInt(r.FormValue("limit"), 10)
+	if err != nil {
+		return common.StatusError{Code: 422, Err: errors.New("Limit should be a number")}
+	}
+	offset, err := util.ValidateInt(r.FormValue("offset"), 0)
+	if err != nil {
+		return common.StatusError{Code: 422, Err: errors.New("Offset should be a number")}
+	}
+
+	items, err := c.streamService.Load(model.StreamQuery{Streams: []uuid.UUID{streamID}}, limit, offset)
 	if err != nil {
 		return common.StatusError{Code: 400, Err: errors.New("An error occurred loading streams")}
 	}
