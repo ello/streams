@@ -28,7 +28,7 @@ func TestJsonMarshal(t *testing.T) {
 		//				create some tiny drift. In practice, this is fine.  Rounding to
 		//				the second level avoids issues with testing.
 		Timestamp: time.Now().Round(time.Second),
-		Type:      0,
+		Type:      model.TypePost,
 		ID:        id,
 	}
 
@@ -42,6 +42,10 @@ func TestJsonMarshal(t *testing.T) {
 		"fromJSON": fromJSON,
 		"ERROR":    err,
 	}).Debug("StreamItem Example")
+
+	if err != nil {
+		t.Errorf("Error converting to/from json")
+	}
 
 	if item != fromJSON {
 		t.Errorf("Source doesn't match the marshal/unmarshaled value")
@@ -57,6 +61,10 @@ func TestJsonMarshal(t *testing.T) {
 		"fromJSON": fromJSON2,
 		"ERROR":    err,
 	}).Debug("RoshiStreamItem Example")
+
+	if err != nil {
+		t.Errorf("Error converting to/from json")
+	}
 
 	if model.RoshiStreamItem(item) != fromJSON2 {
 		t.Errorf("Source doesn't match the marshal/unmarshaled value with RoshiStreamItem")

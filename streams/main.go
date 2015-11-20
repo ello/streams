@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"net/http"
+	"time"
 
 	log "github.com/Sirupsen/logrus"
 	"github.com/codegangsta/negroni"
@@ -11,6 +12,7 @@ import (
 	"github.com/ello/ello-go/streams/service"
 	"github.com/julienschmidt/httprouter"
 	nlog "github.com/meatballhat/negroni-logrus"
+	"github.com/rcrowley/go-metrics"
 )
 
 var verbose bool
@@ -29,6 +31,7 @@ func main() {
 	}
 	if veryVerbose {
 		logLevel = log.DebugLevel
+		go metrics.Write(metrics.DefaultRegistry, 1*time.Second, log.New().Writer())
 	}
 	log.SetLevel(logLevel)
 
@@ -45,9 +48,11 @@ func main() {
 	}))
 
 	streamsController := api.NewStreamController(streamsService)
-
 	// controllers register their routes with the router
 	streamsController.Register(router)
+
+	metricsController := api.NewMetricsController()
+	metricsController.Register(router)
 
 	n := negroni.New(
 		negroni.NewRecovery(),
