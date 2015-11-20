@@ -51,8 +51,8 @@ func main() {
 	// controllers register their routes with the router
 	streamsController.Register(router)
 
-	metricsController := api.NewMetricsController()
-	metricsController.Register(router)
+	healthController := api.NewHealthController()
+	healthController.Register(router)
 
 	n := negroni.New(
 		negroni.NewRecovery(),
