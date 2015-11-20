@@ -2,7 +2,8 @@ package main
 
 import (
 	"flag"
-	"net/http"
+	"fmt"
+	"os"
 	"time"
 
 	log "github.com/Sirupsen/logrus"
@@ -17,13 +18,27 @@ import (
 
 var verbose bool
 var veryVerbose bool
+var help bool
+var helpMessage = `ELLO STREAM API
+--------------------------
+-v or -vv for verbose/veryverbose output
+
+Set ENV Variables to configure:
+ELLO_API_PORT for the port to run this service on.  Default is 8080
+ELLO_ROSHI_HOST for the location of the roshi instance.  Default is http://localhost:6302
+`
 
 func main() {
 
 	flag.BoolVar(&verbose, "v", false, "if set, show messages from the logger")
 	flag.BoolVar(&veryVerbose, "vv", false, "if set, show ALL messages from the logger")
-
+	flag.BoolVar(&help, "h", false, "help?")
 	flag.Parse()
+
+	if help {
+		fmt.Println(helpMessage)
+		os.Exit(0)
+	}
 
 	logLevel := log.WarnLevel
 	if verbose {
@@ -35,17 +50,12 @@ func main() {
 	}
 	log.SetLevel(logLevel)
 
-	streamsService, err := service.NewRoshiStreamService("http://localhost:6302")
+	streamsService, err := service.NewRoshiStreamService(util.GetEnvWithDefault("ELLO_ROSHI_HOST", "http://localhost:6302"))
 	if err != nil {
 		log.Panic(err)
 	}
 
 	router := httprouter.New()
-
-	router.GET("/test", httprouter.Handle(func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-		log.Debug("test")
-		w.Write([]byte("test ack!"))
-	}))
 
 	streamsController := api.NewStreamController(streamsService)
 	// controllers register their routes with the router
