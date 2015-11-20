@@ -88,7 +88,7 @@ func (s roshiStreamService) Load(query model.StreamQuery, limit int, offset int)
 		return nil, err
 	}
 
-	uri := s.url.String() + "?coalesce=true"
+	uri := fmt.Sprintf("%v?coalesce=true&limit=%d&offset=%d", s.url.String(), limit, offset)
 
 	log.WithFields(log.Fields{
 		"Body": string(requestBody),

@@ -46,7 +46,7 @@ func main() {
 	}
 	if veryVerbose {
 		logLevel = log.DebugLevel
-		go metrics.Write(metrics.DefaultRegistry, 1*time.Second, log.New().Writer())
+		go metrics.Write(metrics.DefaultRegistry, 1*time.Minute, log.New().Writer())
 	}
 	log.SetLevel(logLevel)
 

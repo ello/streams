@@ -51,11 +51,12 @@ func (c *streamController) coalesceStreams(w http.ResponseWriter, r *http.Reques
 	body, err := ioutil.ReadAll(r.Body)
 	log.WithFields(fieldsFor(r, body, err)).Debug("/coalesce")
 
-	limit, err := util.ValidateInt(r.FormValue("limit"), 10)
+	queryParams := r.URL.Query()
+	limit, err := util.ValidateInt(queryParams.Get("limit"), 10)
 	if err != nil {
 		return common.StatusError{Code: 422, Err: errors.New("Limit should be a number")}
 	}
-	offset, err := util.ValidateInt(r.FormValue("offset"), 0)
+	offset, err := util.ValidateInt(queryParams.Get("offset"), 0)
 	if err != nil {
 		return common.StatusError{Code: 422, Err: errors.New("Offset should be a number")}
 	}
@@ -87,11 +88,12 @@ func (c *streamController) getStream(w http.ResponseWriter, r *http.Request, ps 
 		return common.StatusError{Code: 422, Err: errors.New("id must be a valid UUID")}
 	}
 
-	limit, err := util.ValidateInt(r.FormValue("limit"), 10)
+	queryParams := r.URL.Query()
+	limit, err := util.ValidateInt(queryParams.Get("limit"), 10)
 	if err != nil {
 		return common.StatusError{Code: 422, Err: errors.New("Limit should be a number")}
 	}
-	offset, err := util.ValidateInt(r.FormValue("offset"), 0)
+	offset, err := util.ValidateInt(queryParams.Get("offset"), 0)
 	if err != nil {
 		return common.StatusError{Code: 422, Err: errors.New("Offset should be a number")}
 	}
