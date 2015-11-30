@@ -46,7 +46,7 @@ install: test
 build:export GO15VENDOREXPERIMENT=1
 build:
 	@mkdir -p bin/
-	@go build -ldflags=$(GOLDFLAGS) -o bin/streams
+	@go build -ldflags $(GOLDFLAGS) -o bin/streams
 	@$(PRINT_OK)
 
 rebuild: clean build

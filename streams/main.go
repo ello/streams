@@ -16,6 +16,9 @@ import (
 	"github.com/rcrowley/go-metrics"
 )
 
+var commit string
+var branch string
+var startTime = time.Now()
 var verbose bool
 var veryVerbose bool
 var help bool
@@ -60,7 +63,7 @@ func main() {
 	streamsController := api.NewStreamController(streamsService)
 	streamsController.Register(router)
 
-	healthController := api.NewHealthController()
+	healthController := api.NewHealthController(startTime, commit)
 	healthController.Register(router)
 
 	n := negroni.New(
