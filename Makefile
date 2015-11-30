@@ -5,10 +5,6 @@ announce:
 
 setup: announce get-tools
 	@$(PRINT_LINE)
-	$(call becho,"~~~    github.com/ello/ello-go/common    ~~~")
-	@$(PRINT_LINE)
-	@cd common && $(MAKE) setup
-	@$(PRINT_LINE)
 	$(call becho,"~~~    github.com/ello/ello-go/streams   ~~~")
 	@$(PRINT_LINE)
 	@cd streams && $(MAKE) setup
@@ -57,19 +53,11 @@ nuke:
 
 all:
 	@$(PRINT_LINE)
-	$(call becho,"~~~    github.com/ello/ello-go/common    ~~~")
-	@$(PRINT_LINE)
-	@cd common && $(MAKE) all
-	@$(PRINT_LINE)
 	$(call becho,"~~~    github.com/ello/ello-go/streams   ~~~")
 	@$(PRINT_LINE)
 	@cd streams && $(MAKE) all
 
 test:
-	@$(PRINT_LINE)
-	$(call becho,"~~~    github.com/ello/ello-go/common    ~~~")
-	@$(PRINT_LINE)
-	@cd common && $(MAKE) test
 	@$(PRINT_LINE)
 	$(call becho,"~~~    github.com/ello/ello-go/streams   ~~~")
 	@$(PRINT_LINE)

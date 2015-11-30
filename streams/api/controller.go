@@ -6,7 +6,6 @@ import (
 	log "github.com/Sirupsen/logrus"
 
 	"github.com/Sirupsen/logrus"
-	common "github.com/ello/ello-go/common/http"
 	"github.com/julienschmidt/httprouter"
 	"github.com/unrolled/render"
 )
@@ -34,7 +33,7 @@ func (c *baseController) handle(a action) httprouter.Handle {
 		if err != nil {
 			switch e := err.(type) {
 			// This refers to controllers.Error
-			case common.Error:
+			case Error:
 				// We can retrieve the status here and write out a specific
 				// HTTP status code.
 				log.Debugf("HTTP %d - %s", e.Status(), e)

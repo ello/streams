@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/ello/ello-go/common/util"
+	"github.com/ello/ello-go/streams/util"
 )
 
 func ExampleValidateInt() {

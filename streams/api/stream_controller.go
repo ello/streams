@@ -8,10 +8,9 @@ import (
 	"time"
 
 	log "github.com/Sirupsen/logrus"
-	common "github.com/ello/ello-go/common/http"
-	"github.com/ello/ello-go/common/util"
 	"github.com/ello/ello-go/streams/model"
 	"github.com/ello/ello-go/streams/service"
+	"github.com/ello/ello-go/streams/util"
 	"github.com/julienschmidt/httprouter"
 	"github.com/m4rw3r/uuid"
 	"github.com/rcrowley/go-metrics"
@@ -54,23 +53,23 @@ func (c *streamController) coalesceStreams(w http.ResponseWriter, r *http.Reques
 	queryParams := r.URL.Query()
 	limit, err := util.ValidateInt(queryParams.Get("limit"), 10)
 	if err != nil {
-		return common.StatusError{Code: 422, Err: errors.New("Limit should be a number")}
+		return StatusError{Code: 422, Err: errors.New("Limit should be a number")}
 	}
 	offset, err := util.ValidateInt(queryParams.Get("offset"), 0)
 	if err != nil {
-		return common.StatusError{Code: 422, Err: errors.New("Offset should be a number")}
+		return StatusError{Code: 422, Err: errors.New("Offset should be a number")}
 	}
 
 	var query model.StreamQuery
 	err = json.Unmarshal(body, &query)
 
 	if err != nil {
-		return common.StatusError{Code: 422, Err: err}
+		return StatusError{Code: 422, Err: err}
 	}
 
 	items, err := c.streamService.Load(query, limit, offset)
 	if err != nil {
-		return common.StatusError{Code: 400, Err: errors.New("An error occurred loading streams")}
+		return StatusError{Code: 400, Err: errors.New("An error occurred loading streams")}
 	}
 
 	c.JSON(w, http.StatusOK, items)
@@ -85,22 +84,22 @@ func (c *streamController) getStream(w http.ResponseWriter, r *http.Request, ps 
 	//get ID and validate that it is a uuid.
 	streamID, err := uuid.FromString(ps.ByName("id"))
 	if err != nil && !streamID.IsZero() {
-		return common.StatusError{Code: 422, Err: errors.New("id must be a valid UUID")}
+		return StatusError{Code: 422, Err: errors.New("id must be a valid UUID")}
 	}
 
 	queryParams := r.URL.Query()
 	limit, err := util.ValidateInt(queryParams.Get("limit"), 10)
 	if err != nil {
-		return common.StatusError{Code: 422, Err: errors.New("Limit should be a number")}
+		return StatusError{Code: 422, Err: errors.New("Limit should be a number")}
 	}
 	offset, err := util.ValidateInt(queryParams.Get("offset"), 0)
 	if err != nil {
-		return common.StatusError{Code: 422, Err: errors.New("Offset should be a number")}
+		return StatusError{Code: 422, Err: errors.New("Offset should be a number")}
 	}
 
 	items, err := c.streamService.Load(model.StreamQuery{Streams: []uuid.UUID{streamID}}, limit, offset)
 	if err != nil {
-		return common.StatusError{Code: 400, Err: errors.New("An error occurred loading streams")}
+		return StatusError{Code: 400, Err: errors.New("An error occurred loading streams")}
 	}
 
 	c.JSON(w, http.StatusOK, items)
@@ -122,13 +121,13 @@ func (c *streamController) addToStream(w http.ResponseWriter, r *http.Request, p
 	}).Debug("Unmarshaled items")
 
 	if err != nil {
-		return common.StatusError{Code: 422, Err: errors.New("body must be an array of StreamItems")}
+		return StatusError{Code: 422, Err: errors.New("body must be an array of StreamItems")}
 	}
 
 	err = c.streamService.Add(items)
 
 	if err != nil {
-		return common.StatusError{Code: 400, Err: errors.New("An error occurred adding to the stream(s)")}
+		return StatusError{Code: 400, Err: errors.New("An error occurred adding to the stream(s)")}
 	}
 
 	c.JSON(w, http.StatusCreated, nil)

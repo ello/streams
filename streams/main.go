@@ -8,16 +8,15 @@ import (
 
 	log "github.com/Sirupsen/logrus"
 	"github.com/codegangsta/negroni"
-	"github.com/ello/ello-go/common/util"
 	"github.com/ello/ello-go/streams/api"
 	"github.com/ello/ello-go/streams/service"
+	"github.com/ello/ello-go/streams/util"
 	"github.com/julienschmidt/httprouter"
 	nlog "github.com/meatballhat/negroni-logrus"
 	"github.com/rcrowley/go-metrics"
 )
 
 var commit string
-var branch string
 var startTime = time.Now()
 var verbose bool
 var veryVerbose bool

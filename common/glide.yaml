@@ -1,4 +1,0 @@
-package: github.com/ello/ello-go/common
-import:
-- package: github.com/julienschmidt/httprouter
-- package: github.com/unrolled/render

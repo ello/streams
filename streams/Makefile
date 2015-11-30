@@ -40,8 +40,8 @@ fmt:
 
 install:export GO15VENDOREXPERIMENT=1
 install: test
-	@echo "=== go install ==="
 	@go install -ldflags=$(GOLDFLAGS)
+	@$(PRINT_OK)
 
 build:export GO15VENDOREXPERIMENT=1
 build:
@@ -51,9 +51,9 @@ build:
 
 rebuild: clean build
 
-docker:
-	@echo "=== docker build ==="
-	# @docker build -t services .
+docker: test
+	@docker build -t streams . > /dev/null 2>&1
+	@$(PRINT_OK)
 
 test:export GO15VENDOREXPERIMENT=1
 test:export LOGXI=dat:sqlx=off
@@ -62,18 +62,18 @@ test: fmt vet lint
 	@$(PRINT_OK)
 
 test-w:
-	@echo "=== testing | watch mode ==="
 	@fswatch -o . -r | xargs -n1 -I{} make test
 
 server:export GO15VENDOREXPERIMENT=1
 server:
-	@echo "=== server ==="
 	@go run main.go
 
 server-w:
-	@echo "=== server | watch mode ==="
 	@gin -a 8080 -i run
 
-deploy: test
+deploy: docker
+	#stuff to send docker image up somewhere here
+	@$(PRINT_OK)
+
 
 .PHONY: setup cloc errcheck vet lint fmt install build test deploy docker
