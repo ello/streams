@@ -53,7 +53,8 @@ func main() {
 	}
 	log.SetLevel(logLevel)
 
-	streamsService, err := service.NewRoshiStreamService(util.GetEnvWithDefault("ELLO_ROSHI_HOST", "http://localhost:6302"))
+	roshi := util.GetEnvWithDefault("ELLO_ROSHI_HOST", "http://localhost:6302")
+	streamsService, err := service.NewRoshiStreamService(roshi)
 	if err != nil {
 		log.Panic(err)
 	}
@@ -63,7 +64,7 @@ func main() {
 	streamsController := api.NewStreamController(streamsService)
 	streamsController.Register(router)
 
-	healthController := api.NewHealthController(startTime, commit)
+	healthController := api.NewHealthController(startTime, commit, roshi)
 	healthController.Register(router)
 
 	n := negroni.New(

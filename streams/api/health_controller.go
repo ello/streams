@@ -14,6 +14,7 @@ type healthController struct {
 	baseController
 	startTime time.Time
 	commit    string
+	roshi     string
 }
 
 type heartbeat struct {
@@ -22,10 +23,11 @@ type heartbeat struct {
 }
 
 //NewHealthController returns a controller that will display metrics to /metrics
-func NewHealthController(startTime time.Time, commit string) Controller {
+func NewHealthController(startTime time.Time, commit string, roshiURI string) Controller {
 	return &healthController{
 		startTime: startTime,
 		commit:    commit,
+		roshi:     roshiURI,
 	}
 }
 
@@ -46,8 +48,17 @@ func (c *healthController) printMetrics(w http.ResponseWriter, r *http.Request, 
 }
 
 func (c *healthController) healthCheck(w http.ResponseWriter, r *http.Request, ps httprouter.Params) error {
-	//TODO Make this more robust
+	timeout := time.Duration(1 * time.Second)
+	client := http.Client{
+		Timeout: timeout,
+	}
+	resp, err := client.Get(c.roshi + "/metrics")
+	if err != nil || resp.StatusCode != 200 {
+		c.Text(w, http.StatusInternalServerError, "ERR")
+		return nil
+	}
 	c.Text(w, http.StatusOK, "OK")
+
 	return nil
 }
 
