@@ -1,4 +1,4 @@
-FROM golang
+FROM golang:1.5.1
 EXPOSE 8080
 
 COPY ./glide.yaml /go/src/github.com/ello/ello-go/streams/glide.yaml
@@ -10,4 +10,4 @@ RUN GO15VENDOREXPERIMENT=1 glide install
 COPY . /go/src/github.com/ello/ello-go/streams/
 RUN GO15VENDOREXPERIMENT=1 go build
 
-ENTRYPOINT ["./streams"]
+CMD ["./streams"]

@@ -7,7 +7,7 @@ roshi:
   image: "500px/roshi:latest"
   links:
     - redis
-  expose:
+  ports:
     - "6302:6302"
   command: "-redis.instances=redis:6379"
 
