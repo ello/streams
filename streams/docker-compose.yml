@@ -1,0 +1,22 @@
+redis:
+  image: redis
+  ports:
+    - "6379:6379"
+
+roshi:
+  image: "500px/roshi:latest"
+  links:
+    - redis
+  expose:
+    - "6302:6302"
+  command: "-redis.instances=redis:6379"
+
+streams:
+  build: .
+  environment:
+    ELLO_API_PORT: "8080"
+    ELLO_ROSHI_HOST: "http://roshi:6302"
+  links:
+    - roshi
+  ports:
+    - "8080:8080"
