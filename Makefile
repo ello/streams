@@ -16,6 +16,13 @@ get-tools:
 	@gometalinter --install --update --force --vendor > /dev/null 2>&1
 	@$(PRINT_OK)
 
+get-tools-ci:
+	@go get "github.com/Masterminds/glide"
+	@go build "github.com/Masterminds/glide"
+	@go get -u "github.com/alecthomas/gometalinter" > /dev/null 2>&1
+	@gometalinter --install --update --force --vendor > /dev/null 2>&1
+	@$(PRINT_OK)
+	
 # db-setup:
 # 	@echo "=== setup db ==="
 # 	@dropdb --if-exists ello_services_test > /dev/null 2>&1

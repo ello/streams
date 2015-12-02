@@ -13,6 +13,6 @@ before_install:
 
 install:
   - make get-tools-ci
-  - make dependencies
+  - make setup
 
 script: ELLO_ROSHI_HOST="http://$(docker-machine ip default):6302" make test

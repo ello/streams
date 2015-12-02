@@ -1,22 +1,8 @@
-include ./Makefile.variable
+include ../Makefile.variable
 
 all: test build docker
 
-setup: get-tools dependencies
-
-get-tools:
-	@brew rm --force fswatch readline glide > /dev/null 2>&1
-	@brew install fswatch readline glide > /dev/null 2>&1
-	@go get -u "github.com/alecthomas/gometalinter" > /dev/null 2>&1
-	@gometalinter --install --update --force --vendor > /dev/null 2>&1
-	@$(PRINT_OK)
-
-get-tools-ci:
-	@go get "github.com/Masterminds/glide"
-	@go build "github.com/Masterminds/glide"
-	@go get -u "github.com/alecthomas/gometalinter" > /dev/null 2>&1
-	@gometalinter --install --update --force --vendor > /dev/null 2>&1
-	@$(PRINT_OK)
+setup: dependencies
 
 dependencies:export GO15VENDOREXPERIMENT=1
 dependencies: clean
