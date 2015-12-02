@@ -4,9 +4,9 @@ announce:
 	$(call becho,"=== Ello Go Project ===")
 
 setup: announce get-tools
-	@$(PRINT_LINE)
-	$(call becho,"~~~    github.com/ello/ello-go/streams   ~~~")
-	@$(PRINT_LINE)
+	# @$(PRINT_LINE)
+	# $(call becho,"~~~    github.com/ello/ello-go/streams   ~~~")
+	# @$(PRINT_LINE)
 	@cd streams && $(MAKE) setup
 
 get-tools:
@@ -22,7 +22,7 @@ get-tools-ci:
 	@go get -u "github.com/alecthomas/gometalinter" > /dev/null 2>&1
 	@gometalinter --install --update --force --vendor > /dev/null 2>&1
 	@$(PRINT_OK)
-	
+
 # db-setup:
 # 	@echo "=== setup db ==="
 # 	@dropdb --if-exists ello_services_test > /dev/null 2>&1
