@@ -1,0 +1,18 @@
+sudo: required
+
+language: go
+
+go:
+  - tip
+
+services:
+  - docker
+
+before_install:
+  - docker-compose start roshi
+
+install:
+  - make get-tools-ci
+  - make dependencies
+
+script: ELLO_ROSHI_HOST="http://$(docker-machine ip default):6302" make test
