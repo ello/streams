@@ -7,7 +7,7 @@ import (
 
 	log "github.com/Sirupsen/logrus"
 	"github.com/julienschmidt/httprouter"
-	"github.com/rcrowley/go-metrics"
+	metrics "github.com/rcrowley/go-metrics"
 )
 
 type healthController struct {
@@ -39,14 +39,15 @@ func (c *healthController) Register(router *httprouter.Router) {
 	log.Debug("Health Routes Registered")
 }
 
+// printMetrics will print all metrics from the default registry in the response
 func (c *healthController) printMetrics(w http.ResponseWriter, r *http.Request, ps httprouter.Params) error {
-	//TODO see if metrics supports json output
 	buffer := new(bytes.Buffer)
 	metrics.WriteOnce(metrics.DefaultRegistry, buffer)
 	c.Text(w, http.StatusOK, buffer.String())
 	return nil
 }
 
+// healthCheck will verify it can communicate to the configured roshi instance and return ERR/OK appropriately
 func (c *healthController) healthCheck(w http.ResponseWriter, r *http.Request, ps httprouter.Params) error {
 	timeout := time.Duration(1 * time.Second)
 	client := http.Client{
@@ -62,6 +63,7 @@ func (c *healthController) healthCheck(w http.ResponseWriter, r *http.Request, p
 	return nil
 }
 
+// heartbeat will return a response with the uptime and commit the binary was built with (if available)
 func (c *healthController) heartbeat(w http.ResponseWriter, r *http.Request, ps httprouter.Params) error {
 	heartbeat := heartbeat{
 		Commit: c.commit,

@@ -4,13 +4,6 @@ all: test build docker
 
 setup: dependencies
 
-db-setup:
-	@echo "=== setup db ==="
-	@dropdb --if-exists ello_services_test > /dev/null 2>&1
-	@createdb ello_services_test
-	@psql ello_services_test < schema.dump > /dev/null 2>&1
-	@$(PRINT_OK)
-
 dependencies:export GO15VENDOREXPERIMENT=1
 dependencies: clean
 	@glide install > /dev/null 2>&1
