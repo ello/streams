@@ -55,10 +55,8 @@ func (c *streamController) coalesceStreams(w http.ResponseWriter, r *http.Reques
 	if err != nil {
 		return StatusError{Code: 422, Err: errors.New("Limit should be a number")}
 	}
-	offset, err := util.ValidateInt(queryParams.Get("offset"), 0)
-	if err != nil {
-		return StatusError{Code: 422, Err: errors.New("Offset should be a number")}
-	}
+
+	fromSlug := queryParams.Get("from")
 
 	var query model.StreamQuery
 	err = json.Unmarshal(body, &query)
@@ -67,7 +65,7 @@ func (c *streamController) coalesceStreams(w http.ResponseWriter, r *http.Reques
 		return StatusError{Code: 422, Err: err}
 	}
 
-	items, err := c.streamService.Load(query, limit, offset)
+	items, err := c.streamService.Load(query, limit, fromSlug)
 	if err != nil {
 		return StatusError{Code: 400, Err: errors.New("An error occurred loading streams")}
 	}
@@ -92,12 +90,9 @@ func (c *streamController) getStream(w http.ResponseWriter, r *http.Request, ps 
 	if err != nil {
 		return StatusError{Code: 422, Err: errors.New("Limit should be a number")}
 	}
-	offset, err := util.ValidateInt(queryParams.Get("offset"), 0)
-	if err != nil {
-		return StatusError{Code: 422, Err: errors.New("Offset should be a number")}
-	}
+	fromSlug := queryParams.Get("from")
 
-	items, err := c.streamService.Load(model.StreamQuery{Streams: []uuid.UUID{streamID}}, limit, offset)
+	items, err := c.streamService.Load(model.StreamQuery{Streams: []uuid.UUID{streamID}}, limit, fromSlug)
 	if err != nil {
 		return StatusError{Code: 400, Err: errors.New("An error occurred loading streams")}
 	}

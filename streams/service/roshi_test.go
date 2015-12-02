@@ -67,7 +67,7 @@ var _ = Describe("Roshi Channel Service", func() {
 					Streams: []uuid.UUID{fakeChanID, chanID},
 				}
 
-				c, _ := s.Load(q, 10, 0)
+				c, _ := s.Load(q, 10, "")
 				Expect(c).NotTo(BeEmpty())
 				Expect(len(c)).To(Equal(1))
 				c1 := c[0]

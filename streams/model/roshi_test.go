@@ -89,4 +89,5 @@ func TestJsonMarshal(t *testing.T) {
 	if !reflect.DeepEqual(rItems, fromJSON3) {
 		t.Errorf("Source doesn't match the marshal/unmarshaled value with []RoshiStreamItem")
 	}
+
 }

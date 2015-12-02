@@ -81,14 +81,18 @@ func (s roshiStreamService) Add(items []model.StreamItem) error {
 	return nil
 }
 
-func (s roshiStreamService) Load(query model.StreamQuery, limit int, offset int) ([]model.StreamItem, error) {
+func (s roshiStreamService) Load(query model.StreamQuery, limit int, fromSlug string) ([]model.StreamItem, error) {
 	requestBody, err := json.Marshal(model.RoshiQuery(query))
 	if err != nil {
 		log.Error(err)
 		return nil, err
 	}
 
-	uri := fmt.Sprintf("%v?coalesce=true&limit=%d&offset=%d", s.url.String(), limit, offset)
+	uri := fmt.Sprintf("%v?coalesce=true&limit=%d", s.url.String(), limit)
+	if len(fromSlug) != 0 {
+		// TODO Should probably validate the slug is valid here and return an error if not
+		uri = fmt.Sprintf("%v&%v", uri, fromSlug)
+	}
 
 	log.WithFields(log.Fields{
 		"Body": string(requestBody),
@@ -127,7 +131,8 @@ func (s roshiStreamService) Load(query model.StreamQuery, limit int, offset int)
 	var result model.RoshiResponse
 	err = json.Unmarshal(data, &result)
 	if err != nil {
-		log.Error(err)
+		log.Debugf("Data: %v", string(data))
+		log.Errorf("Error unmarshalling result: %v", err)
 		return nil, err
 	}
 

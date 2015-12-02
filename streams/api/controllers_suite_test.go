@@ -23,7 +23,7 @@ type mockStreamService struct {
 	internal       []model.StreamItem
 	lastItemsOnAdd []model.StreamItem
 	lastLimit      int
-	lastOffset     int
+	lastFromSlug   string
 }
 
 func (s mockStreamService) Add(items []model.StreamItem) error {
@@ -32,9 +32,9 @@ func (s mockStreamService) Add(items []model.StreamItem) error {
 	return nil
 }
 
-func (s mockStreamService) Load(query model.StreamQuery, limit int, offset int) ([]model.StreamItem, error) {
+func (s mockStreamService) Load(query model.StreamQuery, limit int, fromSlug string) ([]model.StreamItem, error) {
 	s.lastLimit = limit
-	s.lastOffset = offset
+	s.lastFromSlug = fromSlug
 	return s.internal, nil
 }
 
