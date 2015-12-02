@@ -9,7 +9,7 @@ services:
   - docker
 
 before_install:
-  - docker-compose start roshi
+  - docker-compose -f ./streams/docker-compose.yml start roshi
 
 install:
   - make get-tools-ci
