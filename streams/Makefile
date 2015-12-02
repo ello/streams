@@ -51,7 +51,7 @@ docker: test
 test:export GO15VENDOREXPERIMENT=1
 test:export LOGXI=dat:sqlx=off
 test: fmt vet lint
-	@go test `glide novendor` -cover
+	@go test `glide novendor`
 	@$(PRINT_OK)
 
 test-w:
