@@ -12,7 +12,6 @@ before_install:
   - docker-compose -f ./streams/docker-compose.yml start roshi
 
 install:
-  - make get-tools-ci
-  - make setup
+  - make setup-ci
 
 script: ELLO_ROSHI_HOST="http://$(docker-machine ip default):6302" make test
