@@ -17,7 +17,7 @@ type healthController struct {
 	roshi     string
 }
 
-type heartbeat struct {
+type heartbeatResponse struct {
 	Commit string `json:"commit"`
 	Uptime string `json:"uptime"`
 }
@@ -65,7 +65,7 @@ func (c *healthController) healthCheck(w http.ResponseWriter, r *http.Request, p
 
 // heartbeat will return a response with the uptime and commit the binary was built with (if available)
 func (c *healthController) heartbeat(w http.ResponseWriter, r *http.Request, ps httprouter.Params) error {
-	heartbeat := heartbeat{
+	heartbeat := heartbeatResponse{
 		Commit: c.commit,
 		Uptime: time.Now().Sub(c.startTime).String(),
 	}
