@@ -18,7 +18,3 @@ script: make test
 
 notifications:
   slack: ***REMOVED***
-
-cache:
-  directories:
-    - ./streams/vendor
