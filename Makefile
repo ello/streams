@@ -21,7 +21,7 @@ setup-ci: announce get-tools-ci
 	@cd streams && $(MAKE) setup
 
 get-tools-ci:
-	@go install -u "github.com/Masterminds/glide"
+	@go get -u "github.com/Masterminds/glide"
 	@go build "github.com/Masterminds/glide"
 	@go get -u "github.com/alecthomas/gometalinter" > /dev/null 2>&1
 	@gometalinter --install --update --force  > /dev/null 2>&1
