@@ -9,11 +9,9 @@ setup: announce get-tools
 	@$(PRINT_LINE)
 	@cd streams && $(MAKE) setup
 
-get-tools:
-	@brew rm --force fswatch readline glide > /dev/null 2>&1
-	@brew install fswatch readline glide > /dev/null 2>&1
-	@go get -u "github.com/alecthomas/gometalinter" > /dev/null 2>&1
-	@gometalinter --install --update --force --vendor > /dev/null 2>&1
+get-tools: get-tools-ci
+	@brew rm --force fswatch readline > /dev/null 2>&1
+	@brew install fswatch readline > /dev/null 2>&1
 	@$(PRINT_OK)
 
 setup-ci: announce get-tools-ci
@@ -23,11 +21,12 @@ setup-ci: announce get-tools-ci
 	@cd streams && $(MAKE) setup
 
 get-tools-ci:
-	@go get "github.com/Masterminds/glide"
+	@go install -u "github.com/Masterminds/glide"
 	@go build "github.com/Masterminds/glide"
 	@go get -u "github.com/alecthomas/gometalinter" > /dev/null 2>&1
-	@gometalinter --install --update --force --vendor > /dev/null 2>&1
+	@gometalinter --install --update --force  > /dev/null 2>&1
 	@$(PRINT_OK)
+
 
 # db-setup:
 # 	@echo "=== setup db ==="
@@ -60,9 +59,6 @@ install:export GO15VENDOREXPERIMENT=1
 install: test
 	@echo "=== go install ==="
 	@go install -ldflags=$(GOLDFLAGS)
-nuke:
-	@make setup
-	@make all
 
 all:
 	@$(PRINT_LINE)

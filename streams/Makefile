@@ -5,7 +5,7 @@ all: test build docker
 setup: dependencies
 
 dependencies:export GO15VENDOREXPERIMENT=1
-dependencies: clean
+dependencies:
 	@glide install > /dev/null 2>&1
 	@glide rebuild > /dev/null 2>&1
 	@$(PRINT_OK)
