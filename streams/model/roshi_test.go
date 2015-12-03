@@ -47,9 +47,7 @@ func TestJsonMarshal(t *testing.T) {
 		t.Errorf("Error converting to/from json")
 	}
 
-	if item != fromJSON {
-		t.Errorf("Source doesn't match the marshal/unmarshaled value")
-	}
+	CheckStreamItems(item, fromJSON, t)
 
 	output2, _ := json.Marshal(model.RoshiStreamItem(item))
 	var fromJSON2 model.RoshiStreamItem
@@ -66,9 +64,7 @@ func TestJsonMarshal(t *testing.T) {
 		t.Errorf("Error converting to/from json")
 	}
 
-	if model.RoshiStreamItem(item) != fromJSON2 {
-		t.Errorf("Source doesn't match the marshal/unmarshaled value with RoshiStreamItem")
-	}
+	checkRoshiItems(model.RoshiStreamItem(item), fromJSON2, t)
 
 	items := []model.StreamItem{
 		item,
@@ -86,8 +82,19 @@ func TestJsonMarshal(t *testing.T) {
 		"ERROR":    err,
 	}).Debug("RoshiStreamItem Example")
 
+	checkAllRoshi(rItems, fromJSON3, t)
 	if !reflect.DeepEqual(rItems, fromJSON3) {
 		t.Errorf("Source doesn't match the marshal/unmarshaled value with []RoshiStreamItem")
 	}
 
+}
+
+func checkRoshiItems(c model.RoshiStreamItem, c1 model.RoshiStreamItem, t *testing.T) {
+	CheckStreamItems(model.StreamItem(c), model.StreamItem(c1), t)
+}
+
+func checkAllRoshi(c []model.RoshiStreamItem, c1 []model.RoshiStreamItem, t *testing.T) {
+	for i := 0; i < len(c); i++ {
+		checkRoshiItems(c[i], c1[i], t)
+	}
 }
