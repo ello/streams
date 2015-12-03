@@ -21,4 +21,4 @@ notifications:
 
 cache:
   directories:
-    - streams/vendor
+    - ./streams/vendor
