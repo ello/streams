@@ -28,3 +28,9 @@ type StreamItem struct {
 type StreamQuery struct {
 	Streams []uuid.UUID `json:"streams"`
 }
+
+//StreamQueryResponse represents the data returned for a stream query
+type StreamQueryResponse struct {
+	Items  []StreamItem
+	Cursor string
+}

@@ -9,5 +9,5 @@ type StreamService interface {
 	Add(items []model.StreamItem) error
 
 	//Load will pull a coalesced view of the streams in the query
-	Load(query model.StreamQuery, limit int, fromSlug string) ([]model.StreamItem, error)
+	Load(query model.StreamQuery, limit int, fromSlug string) (*model.StreamQueryResponse, error)
 }

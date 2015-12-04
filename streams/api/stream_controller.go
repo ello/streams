@@ -3,6 +3,7 @@ package api
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 	"time"
@@ -65,12 +66,14 @@ func (c *streamController) coalesceStreams(w http.ResponseWriter, r *http.Reques
 		return StatusError{Code: 422, Err: err}
 	}
 
-	items, err := c.streamService.Load(query, limit, fromSlug)
+	response, err := c.streamService.Load(query, limit, fromSlug)
 	if err != nil {
 		return StatusError{Code: 400, Err: errors.New("An error occurred loading streams")}
 	}
 
-	c.JSON(w, http.StatusOK, items)
+	addLink(w, nextPage(r, response, limit))
+
+	c.JSON(w, http.StatusOK, response.Items)
 	coalesceTimer.UpdateSince(startTime)
 	return nil
 }
@@ -92,12 +95,14 @@ func (c *streamController) getStream(w http.ResponseWriter, r *http.Request, ps 
 	}
 	fromSlug := queryParams.Get("from")
 
-	items, err := c.streamService.Load(model.StreamQuery{Streams: []uuid.UUID{streamID}}, limit, fromSlug)
+	response, err := c.streamService.Load(model.StreamQuery{Streams: []uuid.UUID{streamID}}, limit, fromSlug)
 	if err != nil {
 		return StatusError{Code: 400, Err: errors.New("An error occurred loading streams")}
 	}
 
-	c.JSON(w, http.StatusOK, items)
+	addLink(w, nextPage(r, response, limit))
+
+	c.JSON(w, http.StatusOK, response.Items)
 	getStreamTimer.UpdateSince(startTime)
 	return nil
 }
@@ -128,4 +133,19 @@ func (c *streamController) addToStream(w http.ResponseWriter, r *http.Request, p
 	c.JSON(w, http.StatusCreated, nil)
 	addToStreamTimer.UpdateSince(startTime)
 	return nil
+}
+
+func addLink(w http.ResponseWriter, nextPageLink string) {
+	w.Header().Set("Link", fmt.Sprintf("<%v>; rel=\"next\"", nextPageLink))
+}
+
+func nextPage(r *http.Request, items *model.StreamQueryResponse, limit int) string {
+	uri := ""
+	if r.TLS != nil {
+		uri = "https://"
+	} else {
+		uri = "http://"
+	}
+
+	return fmt.Sprintf("%v%v%v?limit=%d&from=%s", uri, r.Host, r.URL.Path, limit, items.Cursor)
 }

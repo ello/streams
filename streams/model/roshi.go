@@ -32,14 +32,19 @@ type RoshiQuery StreamQuery
 
 // MarshalJSON converts from a RoshiStreamItem to the expected json for Roshi
 func (item RoshiStreamItem) MarshalJSON() ([]byte, error) {
-	member, _ := json.Marshal(&roshiBody{
-		ID:   item.ID,
-		Type: item.Type,
-	})
+	member, _ := MemberJSON(item)
 	return json.Marshal(&roshiItem{
 		Key:    []byte(item.StreamID.String()),
 		Score:  float64(item.Timestamp.UnixNano()),
 		Member: []byte(member),
+	})
+}
+
+//MemberJSON Returns the byte array of the json for a given stream item in roshi member form
+func MemberJSON(item RoshiStreamItem) ([]byte, error) {
+	return json.Marshal(&roshiBody{
+		ID:   item.ID,
+		Type: item.Type,
 	})
 }
 

@@ -2,10 +2,12 @@ package service
 
 import (
 	"bytes"
+	"encoding/base64"
 	"encoding/json"
 	"errors"
 	"fmt"
 	"io/ioutil"
+	"math"
 	"net/http"
 	"net/http/httputil"
 	"net/url"
@@ -81,7 +83,7 @@ func (s roshiStreamService) Add(items []model.StreamItem) error {
 	return nil
 }
 
-func (s roshiStreamService) Load(query model.StreamQuery, limit int, fromSlug string) ([]model.StreamItem, error) {
+func (s roshiStreamService) Load(query model.StreamQuery, limit int, cursor string) (*model.StreamQueryResponse, error) {
 	requestBody, err := json.Marshal(model.RoshiQuery(query))
 	if err != nil {
 		log.Error(err)
@@ -89,9 +91,9 @@ func (s roshiStreamService) Load(query model.StreamQuery, limit int, fromSlug st
 	}
 
 	uri := fmt.Sprintf("%v?coalesce=true&limit=%d", s.url.String(), limit)
-	if len(fromSlug) != 0 {
+	if len(cursor) != 0 {
 		// TODO Should probably validate the slug is valid here and return an error if not
-		uri = fmt.Sprintf("%v&%v", uri, fromSlug)
+		uri = fmt.Sprintf("%v&start=%v", uri, cursor)
 	}
 
 	log.WithFields(log.Fields{
@@ -143,7 +145,35 @@ func (s roshiStreamService) Load(query model.StreamQuery, limit int, fromSlug st
 		"Raw":      string(data),
 	}).Debug("Execution complete")
 
-	return model.ToStreamItem(result.Items)
+	items, err := model.ToStreamItem(result.Items)
+
+	return &model.StreamQueryResponse{
+		Items:  items,
+		Cursor: generateCursor(result.Items),
+	}, err
+}
+
+func generateCursor(items []model.RoshiStreamItem) string {
+	if len(items) == 0 {
+		return ""
+	}
+	oldest := items[len(items)-1]
+
+	ts := oldest.Timestamp
+	tsBits := math.Float64bits(float64(ts.UnixNano()))
+	member, _ := model.MemberJSON(oldest)
+	encodedMember := base64.StdEncoding.EncodeToString(member)
+	cursor := fmt.Sprintf("%dA%s", tsBits, encodedMember)
+
+	log.WithFields(log.Fields{
+		"Time":           ts,
+		"Time in Bits":   tsBits,
+		"Member":         string(member),
+		"Encoded Member": encodedMember,
+		"Cursor":         cursor,
+	}).Debug("Generated Cursor")
+
+	return cursor
 }
 
 func debug(data []byte, err error) {
