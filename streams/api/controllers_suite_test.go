@@ -32,10 +32,10 @@ func (s mockStreamService) Add(items []model.StreamItem) error {
 	return nil
 }
 
-func (s mockStreamService) Load(query model.StreamQuery, limit int, fromSlug string) ([]model.StreamItem, error) {
+func (s mockStreamService) Load(query model.StreamQuery, limit int, fromSlug string) (*model.StreamQueryResponse, error) {
 	s.lastLimit = limit
 	s.lastFromSlug = fromSlug
-	return s.internal, nil
+	return &model.StreamQueryResponse{Items: s.internal}, nil
 }
 
 var (
