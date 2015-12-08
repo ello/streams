@@ -23,13 +23,13 @@ func TestMain(m *testing.M) {
 func TestJsonMarshal(t *testing.T) {
 	id, _ := uuid.V4()
 	item := model.StreamItem{
-		StreamID: id,
+		StreamID: id.String(),
 		// NOTE:  Converting between int64/float64 at the nanosecond level can
 		//				create some tiny drift. In practice, this is fine.  Rounding to
 		//				the second level avoids issues with testing.
 		Timestamp: time.Now().Round(time.Second),
 		Type:      model.TypePost,
-		ID:        id,
+		ID:        id.String(),
 	}
 
 	output, _ := json.Marshal(item)

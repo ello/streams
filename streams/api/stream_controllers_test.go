@@ -24,15 +24,15 @@ var _ = Describe("StreamController", func() {
 			item1ID, _ := uuid.V4()
 			item2ID, _ := uuid.V4()
 			items := []model.StreamItem{{
-				StreamID:  id,
+				StreamID:  id.String(),
 				Timestamp: time.Now(),
 				Type:      0,
-				ID:        item1ID,
+				ID:        item1ID.String(),
 			}, {
-				StreamID:  id,
+				StreamID:  id.String(),
 				Timestamp: time.Now(),
 				Type:      1,
-				ID:        item2ID,
+				ID:        item2ID.String(),
 			}}
 			itemsJSON, _ := json.Marshal(items)
 			Request("PUT", "/streams", string(itemsJSON))
@@ -64,22 +64,6 @@ var _ = Describe("StreamController", func() {
 			logResponse(response)
 
 			Expect(response.Code).To(Equal(http.StatusCreated))
-		})
-
-		It("should return a status 422 when passed an invalid uuid", func() {
-			jsonStr := `[
-				{
-					"id":"ABC",
-					"ts":"2015-11-16T11:59:29.313068869-07:00",
-					"type":0,
-					"stream_id":"3b1ded01-99ed-4326-9d0b-20127104a2cb"
-				}
-			]`
-
-			Request("PUT", "/streams", jsonStr)
-			logResponse(response)
-
-			Expect(response.Code).To(Equal(422))
 		})
 
 		It("should return a status 422 when passed an invalid date (non ISO8601)", func() {
@@ -152,18 +136,12 @@ var _ = Describe("StreamController", func() {
 			Expect(response.Code).To(Equal(http.StatusOK))
 		})
 
-		It("should return a status 422 when passed an invalid id", func() {
-			Request("GET", "/stream/"+"abc123", "")
-			logResponse(response)
-
-			Expect(response.Code).To(Equal(422))
-		})
 	})
 	Context("when retrieving streams via /streams/coalesce", func() {
 
 		It("should return a status 200 with a valid query string", func() {
 			q := model.StreamQuery{
-				Streams: []uuid.UUID{id},
+				Streams: []string{id.String()},
 			}
 			json, _ := json.Marshal(q)
 			Request("POST", "/streams/coalesce", string(json))
@@ -178,14 +156,6 @@ var _ = Describe("StreamController", func() {
 			logResponse(response)
 
 			Expect(response.Code).To(Equal(http.StatusOK))
-		})
-
-		It("should return a status 422 with an invalid uuid", func() {
-			q := `{"streams":["10e30ca7-b64d-4510-aaff-775fad0f62ed","abc123"]}`
-			Request("POST", "/streams/coalesce", q)
-			logResponse(response)
-
-			Expect(response.Code).To(Equal(422))
 		})
 
 		It("should return a status 422 when passed an invalid query", func() {

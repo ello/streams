@@ -3,12 +3,10 @@ package model
 import (
 	"encoding/json"
 	"time"
-
-	"github.com/m4rw3r/uuid"
 )
 
 type roshiBody struct {
-	ID   uuid.UUID      `json:"content_id"`
+	ID   string         `json:"content_id"`
 	Type StreamItemType `json:"type"`
 }
 
@@ -34,7 +32,7 @@ type RoshiQuery StreamQuery
 func (item RoshiStreamItem) MarshalJSON() ([]byte, error) {
 	member, _ := MemberJSON(item)
 	return json.Marshal(&roshiItem{
-		Key:    []byte(item.StreamID.String()),
+		Key:    []byte(item.StreamID),
 		Score:  float64(item.Timestamp.UnixNano()),
 		Member: []byte(member),
 	})
@@ -53,15 +51,11 @@ func (item *RoshiStreamItem) UnmarshalJSON(data []byte) error {
 	var jsonItem roshiItem
 	err := json.Unmarshal(data, &jsonItem)
 	if err == nil {
-		//unpack the streamID back to a UUID
-		streamID, innerErr := uuid.FromString(string(jsonItem.Key))
-		if innerErr != nil {
-			return innerErr
-		}
+		streamID := string(jsonItem.Key)
 
 		//unpack the body of the record for the id and type
 		var member roshiBody
-		innerErr = json.Unmarshal(jsonItem.Member, &member)
+		innerErr := json.Unmarshal(jsonItem.Member, &member)
 		if innerErr != nil {
 			return innerErr
 		}
@@ -80,7 +74,7 @@ func (item *RoshiStreamItem) UnmarshalJSON(data []byte) error {
 func (q RoshiQuery) MarshalJSON() ([]byte, error) {
 	ids := make([][]byte, len(q.Streams))
 	for i := 0; i < len(q.Streams); i++ {
-		ids[i] = []byte(q.Streams[i].String())
+		ids[i] = []byte(q.Streams[i])
 	}
 	return json.Marshal(ids)
 }

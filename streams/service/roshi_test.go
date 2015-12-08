@@ -32,10 +32,10 @@ var _ = Describe("Roshi Channel Service", func() {
 			contentID, _ := uuid.V4()
 
 			content := model.StreamItem{
-				ID:        contentID,
+				ID:        contentID.String(),
 				Timestamp: time.Now(),
 				Type:      model.TypePost,
-				StreamID:  chanID,
+				StreamID:  chanID.String(),
 			}
 			items := []model.StreamItem{
 				content,
@@ -51,10 +51,10 @@ var _ = Describe("Roshi Channel Service", func() {
 				contentID, _ := uuid.V4()
 
 				content := model.StreamItem{
-					ID:        contentID,
+					ID:        contentID.String(),
 					Timestamp: time.Now(),
 					Type:      model.TypePost,
-					StreamID:  chanID,
+					StreamID:  chanID.String(),
 				}
 				items := []model.StreamItem{
 					content,
@@ -64,7 +64,7 @@ var _ = Describe("Roshi Channel Service", func() {
 
 				fakeChanID, _ := uuid.V4()
 				q := model.StreamQuery{
-					Streams: []uuid.UUID{fakeChanID, chanID},
+					Streams: []string{fakeChanID.String(), chanID.String()},
 				}
 
 				resp, _ := s.Load(q, 10, "")
