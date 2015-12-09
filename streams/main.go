@@ -13,27 +13,21 @@ import (
 	"github.com/ello/ello-go/streams/util"
 	"github.com/julienschmidt/httprouter"
 	nlog "github.com/meatballhat/negroni-logrus"
-	"github.com/rcrowley/go-metrics"
 )
 
 var commit string
 var startTime = time.Now()
-var verbose bool
-var veryVerbose bool
 var help bool
 var helpMessage = `ELLO STREAM API
 --------------------------
--v or -vv for verbose/veryverbose output
-
 Set ENV Variables to configure:
 ELLO_API_PORT for the port to run this service on.  Default is 8080
 ELLO_ROSHI_HOST for the location of the roshi instance.  Default is http://localhost:6302
+ELLO_LOG_LEVEL for the log level.  Valid levels are "debug", "info", "warn", "error"
 `
 
 func main() {
 
-	flag.BoolVar(&verbose, "v", false, "if set, show messages from the logger")
-	flag.BoolVar(&veryVerbose, "vv", false, "if set, show ALL messages from the logger")
 	flag.BoolVar(&help, "h", false, "help?")
 	flag.Parse()
 
@@ -41,16 +35,19 @@ func main() {
 		fmt.Println(helpMessage)
 		os.Exit(0)
 	}
+	level := util.GetEnvWithDefault("ELLO_LOG_LEVEL", "http://localhost:6302")
 
 	logLevel := log.WarnLevel
-	if verbose {
-		logLevel = log.InfoLevel
-	}
-	if veryVerbose {
+	switch level {
+	case "debug":
 		logLevel = log.DebugLevel
-		go metrics.Write(metrics.DefaultRegistry, 1*time.Minute, log.New().Writer())
+	case "info":
+		logLevel = log.InfoLevel
+	case "error":
+		logLevel = log.ErrorLevel
 	}
 	log.SetLevel(logLevel)
+	fmt.Printf("Using log level [%v]\n", logLevel)
 
 	roshi := util.GetEnvWithDefault("ELLO_ROSHI_HOST", "http://localhost:6302")
 	streamsService, err := service.NewRoshiStreamService(roshi)
