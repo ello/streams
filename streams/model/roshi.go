@@ -2,7 +2,11 @@ package model
 
 import (
 	"encoding/json"
+	"io"
+	"strings"
 	"time"
+
+	"github.com/OneOfOne/xxhash"
 )
 
 type roshiBody struct {
@@ -31,8 +35,10 @@ type RoshiQuery StreamQuery
 // MarshalJSON converts from a RoshiStreamItem to the expected json for Roshi
 func (item RoshiStreamItem) MarshalJSON() ([]byte, error) {
 	member, _ := MemberJSON(item)
+	h := xxhash.New64()
+	io.Copy(h, strings.NewReader(item.StreamID))
 	return json.Marshal(&roshiItem{
-		Key:    []byte(item.StreamID),
+		Key:    []byte(h.Sum(nil)),
 		Score:  float64(item.Timestamp.UnixNano()),
 		Member: []byte(member),
 	})
@@ -74,7 +80,9 @@ func (item *RoshiStreamItem) UnmarshalJSON(data []byte) error {
 func (q RoshiQuery) MarshalJSON() ([]byte, error) {
 	ids := make([][]byte, len(q.Streams))
 	for i := 0; i < len(q.Streams); i++ {
-		ids[i] = []byte(q.Streams[i])
+		h := xxhash.New64()
+		io.Copy(h, strings.NewReader(q.Streams[i]))
+		ids[i] = h.Sum(nil)
 	}
 	return json.Marshal(ids)
 }

@@ -2,11 +2,13 @@ package model_test
 
 import (
 	"encoding/json"
+	"io"
 	"os"
-	"reflect"
+	"strings"
 	"testing"
 	"time"
 
+	"github.com/OneOfOne/xxhash"
 	log "github.com/Sirupsen/logrus"
 	"github.com/ello/ello-go/streams/model"
 	"github.com/m4rw3r/uuid"
@@ -83,13 +85,13 @@ func TestJsonMarshal(t *testing.T) {
 	}).Debug("RoshiStreamItem Example")
 
 	checkAllRoshi(rItems, fromJSON3, t)
-	if !reflect.DeepEqual(rItems, fromJSON3) {
-		t.Errorf("Source doesn't match the marshal/unmarshaled value with []RoshiStreamItem")
-	}
-
 }
 
 func checkRoshiItems(c model.RoshiStreamItem, c1 model.RoshiStreamItem, t *testing.T) {
+	//To properly compare, we need to match the hashed stream id
+	h := xxhash.New64()
+	io.Copy(h, strings.NewReader(c.StreamID))
+	c.StreamID = string(h.Sum(nil))
 	CheckStreamItems(model.StreamItem(c), model.StreamItem(c1), t)
 }
 
