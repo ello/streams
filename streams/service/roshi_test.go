@@ -1,11 +1,8 @@
 package service_test
 
 import (
-	"io"
-	"strings"
 	"time"
 
-	"github.com/OneOfOne/xxhash"
 	"github.com/ello/ello-go/streams/model"
 	"github.com/ello/ello-go/streams/service"
 	"github.com/ello/ello-go/streams/util"
@@ -75,9 +72,8 @@ var _ = Describe("Roshi Channel Service", func() {
 				Expect(c).NotTo(BeEmpty())
 				Expect(len(c)).To(Equal(1))
 				c1 := c[0]
-				h := xxhash.New64()
-				io.Copy(h, strings.NewReader(content.StreamID))
-				Expect([]byte(c1.StreamID)).To(Equal(h.Sum(nil)))
+
+				Expect(c1.StreamID).To(Equal(content.StreamID))
 				Expect(c1.ID).To(Equal(content.ID))
 				Expect(c1.Type).To(Equal(content.Type))
 				Expect(c1.Timestamp).To(BeTemporally("~", content.Timestamp, time.Millisecond))

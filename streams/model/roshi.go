@@ -10,8 +10,9 @@ import (
 )
 
 type roshiBody struct {
-	ID   string         `json:"content_id"`
-	Type StreamItemType `json:"type"`
+	ID       string         `json:"content_id"`
+	StreamID string         `json:"stream_id"`
+	Type     StreamItemType `json:"type"`
 }
 
 type roshiItem struct {
@@ -47,8 +48,9 @@ func (item RoshiStreamItem) MarshalJSON() ([]byte, error) {
 //MemberJSON Returns the byte array of the json for a given stream item in roshi member form
 func MemberJSON(item RoshiStreamItem) ([]byte, error) {
 	return json.Marshal(&roshiBody{
-		ID:   item.ID,
-		Type: item.Type,
+		ID:       item.ID,
+		Type:     item.Type,
+		StreamID: item.StreamID,
 	})
 }
 
@@ -57,8 +59,6 @@ func (item *RoshiStreamItem) UnmarshalJSON(data []byte) error {
 	var jsonItem roshiItem
 	err := json.Unmarshal(data, &jsonItem)
 	if err == nil {
-		streamID := string(jsonItem.Key)
-
 		//unpack the body of the record for the id and type
 		var member roshiBody
 		innerErr := json.Unmarshal(jsonItem.Member, &member)
@@ -67,7 +67,7 @@ func (item *RoshiStreamItem) UnmarshalJSON(data []byte) error {
 		}
 
 		//set the values
-		item.StreamID = streamID
+		item.StreamID = member.StreamID
 		item.Timestamp = time.Unix(0, int64(jsonItem.Score))
 		item.Type = member.Type
 		item.ID = member.ID

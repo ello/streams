@@ -2,13 +2,10 @@ package model_test
 
 import (
 	"encoding/json"
-	"io"
 	"os"
-	"strings"
 	"testing"
 	"time"
 
-	"github.com/OneOfOne/xxhash"
 	log "github.com/Sirupsen/logrus"
 	"github.com/ello/ello-go/streams/model"
 	"github.com/m4rw3r/uuid"
@@ -88,10 +85,7 @@ func TestJsonMarshal(t *testing.T) {
 }
 
 func checkRoshiItems(c model.RoshiStreamItem, c1 model.RoshiStreamItem, t *testing.T) {
-	//To properly compare, we need to match the hashed stream id
-	h := xxhash.New64()
-	io.Copy(h, strings.NewReader(c.StreamID))
-	c.StreamID = string(h.Sum(nil))
+	c.StreamID = string(c.StreamID)
 	CheckStreamItems(model.StreamItem(c), model.StreamItem(c1), t)
 }
 
