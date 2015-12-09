@@ -3,7 +3,6 @@ package model_test
 import (
 	"encoding/json"
 	"os"
-	"reflect"
 	"testing"
 	"time"
 
@@ -23,13 +22,13 @@ func TestMain(m *testing.M) {
 func TestJsonMarshal(t *testing.T) {
 	id, _ := uuid.V4()
 	item := model.StreamItem{
-		StreamID: id,
+		StreamID: id.String(),
 		// NOTE:  Converting between int64/float64 at the nanosecond level can
 		//				create some tiny drift. In practice, this is fine.  Rounding to
 		//				the second level avoids issues with testing.
 		Timestamp: time.Now().Round(time.Second),
 		Type:      model.TypePost,
-		ID:        id,
+		ID:        id.String(),
 	}
 
 	output, _ := json.Marshal(item)
@@ -83,13 +82,10 @@ func TestJsonMarshal(t *testing.T) {
 	}).Debug("RoshiStreamItem Example")
 
 	checkAllRoshi(rItems, fromJSON3, t)
-	if !reflect.DeepEqual(rItems, fromJSON3) {
-		t.Errorf("Source doesn't match the marshal/unmarshaled value with []RoshiStreamItem")
-	}
-
 }
 
 func checkRoshiItems(c model.RoshiStreamItem, c1 model.RoshiStreamItem, t *testing.T) {
+	c.StreamID = string(c.StreamID)
 	CheckStreamItems(model.StreamItem(c), model.StreamItem(c1), t)
 }
 

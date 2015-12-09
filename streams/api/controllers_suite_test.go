@@ -86,16 +86,16 @@ func generateFakeResponse(streamID uuid.UUID) []model.StreamItem {
 
 	return []model.StreamItem{
 		{
-			ID:        uuid1,
+			ID:        uuid1.String(),
 			Timestamp: time.Now(),
 			Type:      model.TypePost,
-			StreamID:  streamID,
+			StreamID:  streamID.String(),
 		},
 		{
-			ID:        uuid2,
+			ID:        uuid2.String(),
 			Timestamp: time.Now(),
 			Type:      model.TypeRepost,
-			StreamID:  streamID,
+			StreamID:  streamID.String(),
 		},
 	}
 }

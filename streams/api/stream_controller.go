@@ -13,7 +13,6 @@ import (
 	"github.com/ello/ello-go/streams/service"
 	"github.com/ello/ello-go/streams/util"
 	"github.com/julienschmidt/httprouter"
-	"github.com/m4rw3r/uuid"
 	"github.com/rcrowley/go-metrics"
 )
 
@@ -83,10 +82,7 @@ func (c *streamController) getStream(w http.ResponseWriter, r *http.Request, ps 
 	log.WithFields(fieldsFor(r, nil, nil)).Debug("/getStream")
 
 	//get ID and validate that it is a uuid.
-	streamID, err := uuid.FromString(ps.ByName("id"))
-	if err != nil && !streamID.IsZero() {
-		return StatusError{Code: 422, Err: errors.New("id must be a valid UUID")}
-	}
+	streamID := ps.ByName("id")
 
 	queryParams := r.URL.Query()
 	limit, err := util.ValidateInt(queryParams.Get("limit"), 10)
@@ -95,7 +91,7 @@ func (c *streamController) getStream(w http.ResponseWriter, r *http.Request, ps 
 	}
 	fromSlug := queryParams.Get("from")
 
-	response, err := c.streamService.Load(model.StreamQuery{Streams: []uuid.UUID{streamID}}, limit, fromSlug)
+	response, err := c.streamService.Load(model.StreamQuery{Streams: []string{streamID}}, limit, fromSlug)
 	if err != nil {
 		return StatusError{Code: 400, Err: errors.New("An error occurred loading streams")}
 	}

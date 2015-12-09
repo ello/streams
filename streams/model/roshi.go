@@ -2,14 +2,17 @@ package model
 
 import (
 	"encoding/json"
+	"io"
+	"strings"
 	"time"
 
-	"github.com/m4rw3r/uuid"
+	"github.com/OneOfOne/xxhash"
 )
 
 type roshiBody struct {
-	ID   uuid.UUID      `json:"content_id"`
-	Type StreamItemType `json:"type"`
+	ID       string         `json:"content_id"`
+	StreamID string         `json:"stream_id"`
+	Type     StreamItemType `json:"type"`
 }
 
 type roshiItem struct {
@@ -33,8 +36,10 @@ type RoshiQuery StreamQuery
 // MarshalJSON converts from a RoshiStreamItem to the expected json for Roshi
 func (item RoshiStreamItem) MarshalJSON() ([]byte, error) {
 	member, _ := MemberJSON(item)
+	h := xxhash.New64()
+	io.Copy(h, strings.NewReader(item.StreamID))
 	return json.Marshal(&roshiItem{
-		Key:    []byte(item.StreamID.String()),
+		Key:    []byte(h.Sum(nil)),
 		Score:  float64(item.Timestamp.UnixNano()),
 		Member: []byte(member),
 	})
@@ -43,8 +48,9 @@ func (item RoshiStreamItem) MarshalJSON() ([]byte, error) {
 //MemberJSON Returns the byte array of the json for a given stream item in roshi member form
 func MemberJSON(item RoshiStreamItem) ([]byte, error) {
 	return json.Marshal(&roshiBody{
-		ID:   item.ID,
-		Type: item.Type,
+		ID:       item.ID,
+		Type:     item.Type,
+		StreamID: item.StreamID,
 	})
 }
 
@@ -53,21 +59,15 @@ func (item *RoshiStreamItem) UnmarshalJSON(data []byte) error {
 	var jsonItem roshiItem
 	err := json.Unmarshal(data, &jsonItem)
 	if err == nil {
-		//unpack the streamID back to a UUID
-		streamID, innerErr := uuid.FromString(string(jsonItem.Key))
-		if innerErr != nil {
-			return innerErr
-		}
-
 		//unpack the body of the record for the id and type
 		var member roshiBody
-		innerErr = json.Unmarshal(jsonItem.Member, &member)
+		innerErr := json.Unmarshal(jsonItem.Member, &member)
 		if innerErr != nil {
 			return innerErr
 		}
 
 		//set the values
-		item.StreamID = streamID
+		item.StreamID = member.StreamID
 		item.Timestamp = time.Unix(0, int64(jsonItem.Score))
 		item.Type = member.Type
 		item.ID = member.ID
@@ -80,7 +80,9 @@ func (item *RoshiStreamItem) UnmarshalJSON(data []byte) error {
 func (q RoshiQuery) MarshalJSON() ([]byte, error) {
 	ids := make([][]byte, len(q.Streams))
 	for i := 0; i < len(q.Streams); i++ {
-		ids[i] = []byte(q.Streams[i].String())
+		h := xxhash.New64()
+		io.Copy(h, strings.NewReader(q.Streams[i]))
+		ids[i] = h.Sum(nil)
 	}
 	return json.Marshal(ids)
 }

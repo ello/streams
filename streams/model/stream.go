@@ -2,8 +2,6 @@ package model
 
 import (
 	"time"
-
-	"github.com/m4rw3r/uuid"
 )
 
 // StreamItemType represents the type of stream an item is in
@@ -18,15 +16,15 @@ const (
 
 //StreamItem represents a single item on a stream
 type StreamItem struct {
-	ID        uuid.UUID      `json:"id"`
+	ID        string         `json:"id"`
 	Timestamp time.Time      `json:"ts"`
 	Type      StreamItemType `json:"type"`
-	StreamID  uuid.UUID      `json:"stream_id"`
+	StreamID  string         `json:"stream_id"`
 }
 
 //StreamQuery represents a query for multiple streams
 type StreamQuery struct {
-	Streams []uuid.UUID `json:"streams"`
+	Streams []string `json:"streams"`
 }
 
 //StreamQueryResponse represents the data returned for a stream query
