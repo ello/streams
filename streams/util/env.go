@@ -10,3 +10,9 @@ func GetEnvWithDefault(key string, defaultValue string) string {
 	}
 	return value
 }
+
+//IsEnvPresent will return a boolean of whether the key is present
+func IsEnvPresent(key string) bool {
+	val := os.Getenv(key)
+	return len(val) != 0
+}

@@ -69,7 +69,13 @@ var _ = BeforeSuite(func() {
 	streamService = mockStreamService{
 		internal: generateFakeResponse(StreamID),
 	}
-	streamController := api.NewStreamController(streamService)
+
+	authConfig := api.AuthConfig{
+		Username: []byte("ello"),
+		Password: []byte("password"),
+		Enabled:  false,
+	}
+	streamController := api.NewStreamController(streamService, authConfig)
 
 	streamController.Register(router)
 })
