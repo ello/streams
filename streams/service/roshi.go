@@ -19,14 +19,14 @@ import (
 )
 
 //NewRoshiStreamService takes a url for the roshi server and returns the service
-func NewRoshiStreamService(urlString string, timeoutSeconds time.Duration) (StreamService, error) {
+func NewRoshiStreamService(urlString string, timeout time.Duration) (StreamService, error) {
 	u, err := url.Parse(urlString)
 	if err != nil {
 		return nil, err
 	}
 	return roshiStreamService{
 		url:     u,
-		timeout: timeoutSeconds * time.Second,
+		timeout: timeout,
 	}, nil
 }
 

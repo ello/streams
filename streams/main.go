@@ -63,7 +63,7 @@ func main() {
 	fmt.Printf("Using log level [%v]\n", logLevel)
 
 	roshi := util.GetEnvWithDefault("ELLO_ROSHI_HOST", "http://localhost:6302")
-	streamsService, err := service.NewRoshiStreamService(roshi, time.Duration(util.GetEnvIntWithDefault("ELLO_ROSHI_TIMEOUT", 5)))
+	streamsService, err := service.NewRoshiStreamService(roshi, time.Duration(util.GetEnvIntWithDefault("ELLO_ROSHI_TIMEOUT", 5))*time.Second)
 	if err != nil {
 		log.Panic(err)
 	}
