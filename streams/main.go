@@ -30,6 +30,9 @@ ELLO_AUTH_ENABLED any value will enable basic auth.  Default is disabled.
 ELLO_AUTH_USERNAME for the auth username.  Default is 'ello'.
 ELLO_AUTH_PASSWORD for the auth password.  Default is 'password'.
 ELLO_LOG_LEVEL for the log level.  Valid levels are "debug", "info", "warn", "error"
+ELLO_LIBRATO_EMAIL librato config
+ELLO_LIBRATO_TOKEN librato config
+ELLO_LIBRATO_HOSTNAME librato config
 `
 
 func main() {
