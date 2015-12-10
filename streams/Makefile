@@ -4,6 +4,7 @@ all: test build docker
 
 setup: dependencies
 
+#TODO Try getting rid of the vendor flag env var after 1.6 is out
 dependencies:export GO15VENDOREXPERIMENT=1
 dependencies:
 	@glide install > /dev/null 2>&1
