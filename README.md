@@ -1,4 +1,4 @@
-![Build Status](https://travis-ci.com/ello/ello-go.svg?token=GLeHVitCiVCzVGXgUezV&branch=master)
+[![Build Status](https://travis-ci.com/ello/ello-go.svg?token=GLeHVitCiVCzVGXgUezV&branch=master)](https://travis-ci.com/ello/ello-go)
 
 # Ello Go
 This repository contains Ello's go projects.  For now, at least, we're keeping them in the same repository for developer ease. This may change down the road.
