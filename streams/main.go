@@ -77,13 +77,11 @@ func main() {
 	if util.IsEnvPresent("ELLO_LIBRATO_TOKEN") {
 		go librato.Librato(metrics.DefaultRegistry,
 			10e9, // interval
-			// account owner email address
-			util.GetEnvWithDefault("ELLO_LIBRATO_EMAIL", "***REMOVED***"), //TODO Change/remove before oss
-			// Librato API token
-			util.GetEnvWithDefault("ELLO_LIBRATO_TOKEN", "***REMOVED***"),
-			util.GetEnvWithDefault("ELLO_LIBRATO_HOSTNAME", "ello"), // source
-			[]float64{0.95},                                         // percentiles to send
-			time.Millisecond,                                        // time unit
+			os.Getenv("ELLO_LIBRATO_EMAIL"),    // account owner email address
+			os.Getenv("ELLO_LIBRATO_TOKEN"),    // Librato API token
+			os.Getenv("ELLO_LIBRATO_HOSTNAME"), // source
+			[]float64{0.95},                    // percentiles to send
+			time.Millisecond,                   // time unit
 		)
 	}
 
