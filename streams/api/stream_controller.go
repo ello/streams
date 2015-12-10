@@ -31,9 +31,9 @@ func NewStreamController(service service.StreamService, authConfig AuthConfig) C
 	addToStreamTimer = metrics.NewTimer()
 	coalesceTimer = metrics.NewTimer()
 	getStreamTimer = metrics.NewTimer()
-	metrics.Register("Streams/AddToStream", addToStreamTimer)
-	metrics.Register("Streams/Coalesce", coalesceTimer)
-	metrics.Register("Streams/GetStream", getStreamTimer)
+	metrics.Register("Streams.AddToStream", addToStreamTimer)
+	metrics.Register("Streams.Coalesce", coalesceTimer)
+	metrics.Register("Streams.GetStream", getStreamTimer)
 
 	return &streamController{streamService: service, authConfig: authConfig}
 }

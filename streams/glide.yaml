@@ -16,3 +16,4 @@ import:
 - package: github.com/OneOfOne/xxhash
   subpackages:
   - /native
+- package: github.com/mihasya/go-metrics-librato
