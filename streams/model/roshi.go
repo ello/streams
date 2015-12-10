@@ -33,7 +33,7 @@ type RoshiStreamItem StreamItem
 //RoshiQuery shadows a StreamItem to allow us to export the json Roshi expects
 type RoshiQuery StreamQuery
 
-// MarshalJSON converts from a RoshiStreamItem to the expected json for Roshi
+//MarshalJSON converts from a RoshiStreamItem to the expected json for Roshi, hashing the StreamID with xxhash
 func (item RoshiStreamItem) MarshalJSON() ([]byte, error) {
 	member, _ := MemberJSON(item)
 	h := xxhash.New64()
@@ -76,7 +76,7 @@ func (item *RoshiStreamItem) UnmarshalJSON(data []byte) error {
 	return err
 }
 
-//MarshalJSON takes a roshiquery and creates a list of base64 encoded bytes
+//MarshalJSON takes a roshiquery and creates a list of base64 encoded bytes, hashing the StreamID with xxhash
 func (q RoshiQuery) MarshalJSON() ([]byte, error) {
 	ids := make([][]byte, len(q.Streams))
 	for i := 0; i < len(q.Streams); i++ {
