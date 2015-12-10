@@ -11,6 +11,7 @@ import (
 	"net/http"
 	"net/http/httputil"
 	"net/url"
+	"time"
 
 	log "github.com/Sirupsen/logrus"
 
@@ -18,18 +19,20 @@ import (
 )
 
 //NewRoshiStreamService takes a url for the roshi server and returns the service
-func NewRoshiStreamService(urlString string) (StreamService, error) {
+func NewRoshiStreamService(urlString string, timeoutSeconds time.Duration) (StreamService, error) {
 	u, err := url.Parse(urlString)
 	if err != nil {
 		return nil, err
 	}
 	return roshiStreamService{
-		url: u,
+		url:     u,
+		timeout: timeoutSeconds * time.Second,
 	}, nil
 }
 
 type roshiStreamService struct {
-	url *url.URL
+	url     *url.URL
+	timeout time.Duration
 }
 
 func (s roshiStreamService) Add(items []model.StreamItem) error {
@@ -61,7 +64,9 @@ func (s roshiStreamService) Add(items []model.StreamItem) error {
 		log.Error(err)
 		return err
 	}
-	client := &http.Client{}
+	client := &http.Client{
+		Timeout: s.timeout,
+	}
 	log.WithFields(log.Fields{
 		"client": client,
 		"req":    req,
@@ -110,7 +115,9 @@ func (s roshiStreamService) Load(query model.StreamQuery, limit int, cursor stri
 		log.Error(err)
 		return nil, err
 	}
-	client := &http.Client{}
+	client := &http.Client{
+		Timeout: s.timeout,
+	}
 	log.WithFields(log.Fields{
 		"client": client,
 		"req":    req,

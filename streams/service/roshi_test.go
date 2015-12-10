@@ -15,7 +15,7 @@ var _ = Describe("Roshi Channel Service", func() {
 	var _ = Describe("Instantiation", func() {
 
 		It("sanity?", func() {
-			s, err := service.NewRoshiStreamService(util.GetEnvWithDefault("ELLO_ROSHI_HOST", "http://localhost:6302"))
+			s, err := service.NewRoshiStreamService(util.GetEnvWithDefault("ELLO_ROSHI_HOST", "http://localhost:6302"), 5)
 			Expect(err).To(BeNil())
 			Expect(s).NotTo(BeNil())
 		})
@@ -23,7 +23,7 @@ var _ = Describe("Roshi Channel Service", func() {
 	})
 	var s service.StreamService
 	BeforeEach(func() {
-		s, _ = service.NewRoshiStreamService(util.GetEnvWithDefault("ELLO_ROSHI_HOST", "http://localhost:6302"))
+		s, _ = service.NewRoshiStreamService(util.GetEnvWithDefault("ELLO_ROSHI_HOST", "http://localhost:6302"), 5)
 	})
 
 	Context(".Add", func() {
