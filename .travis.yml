@@ -18,3 +18,7 @@ script: make test
 
 notifications:
   slack: ***REMOVED***
+
+branches:
+  only:
+    - master
