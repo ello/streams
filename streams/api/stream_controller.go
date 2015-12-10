@@ -23,10 +23,11 @@ var getStreamTimer metrics.Timer
 type streamController struct {
 	baseController
 	streamService service.StreamService
+	authConfig    AuthConfig
 }
 
 //NewStreamController is the exported constructor for a streams controller
-func NewStreamController(service service.StreamService) Controller {
+func NewStreamController(service service.StreamService, authConfig AuthConfig) Controller {
 	addToStreamTimer = metrics.NewTimer()
 	coalesceTimer = metrics.NewTimer()
 	getStreamTimer = metrics.NewTimer()
@@ -34,13 +35,13 @@ func NewStreamController(service service.StreamService) Controller {
 	metrics.Register("Streams/Coalesce", coalesceTimer)
 	metrics.Register("Streams/GetStream", getStreamTimer)
 
-	return &streamController{streamService: service}
+	return &streamController{streamService: service, authConfig: authConfig}
 }
 
 func (c *streamController) Register(router *httprouter.Router) {
-	router.PUT("/streams", c.handle(c.addToStream))
-	router.POST("/streams/coalesce", c.handle(c.coalesceStreams))
-	router.GET("/stream/:id", c.handle(c.getStream))
+	router.PUT("/streams", basicAuth(c.handle(c.addToStream), c.authConfig))
+	router.POST("/streams/coalesce", basicAuth(c.handle(c.coalesceStreams), c.authConfig))
+	router.GET("/stream/:id", basicAuth(c.handle(c.getStream), c.authConfig))
 
 	log.Debug("Routes Registered")
 }

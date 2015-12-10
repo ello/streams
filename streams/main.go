@@ -21,8 +21,12 @@ var help bool
 var helpMessage = `ELLO STREAM API
 --------------------------
 Set ENV Variables to configure:
+
 ELLO_API_PORT for the port to run this service on.  Default is 8080
 ELLO_ROSHI_HOST for the location of the roshi instance.  Default is http://localhost:6302
+ELLO_AUTH_ENABLED any value will enable basic auth.  Default is disabled.
+ELLO_AUTH_USERNAME for the auth username.  Default is 'ello'.
+ELLO_AUTH_PASSWORD for the auth password.  Default is 'password'.
 ELLO_LOG_LEVEL for the log level.  Valid levels are "debug", "info", "warn", "error"
 `
 
@@ -55,9 +59,16 @@ func main() {
 		log.Panic(err)
 	}
 
+	authConfig := api.AuthConfig{
+		Username: []byte(util.GetEnvWithDefault("ELLO_AUTH_USERNAME", "ello")),
+		Password: []byte(util.GetEnvWithDefault("ELLO_AUTH_PASSWORD", "password")),
+		Enabled:  util.IsEnvPresent("ELLO_AUTH_ENABLED"),
+	}
+	log.Infof(authConfig.String())
+
 	router := httprouter.New()
 
-	streamsController := api.NewStreamController(streamsService)
+	streamsController := api.NewStreamController(streamsService, authConfig)
 	streamsController.Register(router)
 
 	healthController := api.NewHealthController(startTime, commit, roshi)
