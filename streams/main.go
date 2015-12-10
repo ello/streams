@@ -13,6 +13,8 @@ import (
 	"github.com/ello/ello-go/streams/util"
 	"github.com/julienschmidt/httprouter"
 	nlog "github.com/meatballhat/negroni-logrus"
+	librato "github.com/mihasya/go-metrics-librato"
+	"github.com/rcrowley/go-metrics"
 )
 
 var commit string
@@ -39,17 +41,20 @@ func main() {
 		fmt.Println(helpMessage)
 		os.Exit(0)
 	}
-	level := util.GetEnvWithDefault("ELLO_LOG_LEVEL", "http://localhost:6302")
 
-	logLevel := log.WarnLevel
-	switch level {
+	var logLevel log.Level
+
+	switch util.GetEnvWithDefault("ELLO_LOG_LEVEL", "warn") {
 	case "debug":
 		logLevel = log.DebugLevel
 	case "info":
 		logLevel = log.InfoLevel
 	case "error":
 		logLevel = log.ErrorLevel
+	default:
+		logLevel = log.WarnLevel
 	}
+
 	log.SetLevel(logLevel)
 	fmt.Printf("Using log level [%v]\n", logLevel)
 
@@ -65,6 +70,19 @@ func main() {
 		Enabled:  util.IsEnvPresent("ELLO_AUTH_ENABLED"),
 	}
 	log.Infof(authConfig.String())
+
+	if util.IsEnvPresent("ELLO_LIBRATO_TOKEN") {
+		go librato.Librato(metrics.DefaultRegistry,
+			10e9, // interval
+			// account owner email address
+			util.GetEnvWithDefault("ELLO_LIBRATO_EMAIL", "***REMOVED***"), //TODO Change/remove before oss
+			// Librato API token
+			util.GetEnvWithDefault("ELLO_LIBRATO_TOKEN", "***REMOVED***"),
+			util.GetEnvWithDefault("ELLO_LIBRATO_HOSTNAME", "ello"), // source
+			[]float64{0.95},                                         // percentiles to send
+			time.Millisecond,                                        // time unit
+		)
+	}
 
 	router := httprouter.New()
 
