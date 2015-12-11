@@ -136,6 +136,14 @@ var _ = Describe("StreamController", func() {
 			Expect(response.Code).To(Equal(http.StatusOK))
 		})
 
+		It("should use the pagination slug/limit when calling the stream service", func() {
+			Request("GET", "/stream/12345?from=CBA321&limit=15", "")
+			logResponse(response)
+
+			Expect(response.Code).To(Equal(http.StatusOK))
+			Expect(streamService.lastLimit).To(Equal(15))
+			Expect(streamService.lastFromSlug).To(Equal("CBA321"))
+		})
 	})
 	Context("when retrieving streams via /streams/coalesce", func() {
 
@@ -163,6 +171,15 @@ var _ = Describe("StreamController", func() {
 			logResponse(response)
 
 			Expect(response.Code).To(Equal(422))
+		})
+
+		It("should use the paginations slug/limit when calling the stream service", func() {
+			Request("POST", "/streams/coalesce?from=CBA321&limit=15", `{"streams":["10e30ca7-b64d-4510-aaff-775fad0f62ed","6da0fb88-f8f5-40d3-a42c-97147a41011d"]}`)
+			logResponse(response)
+
+			Expect(response.Code).To(Equal(http.StatusOK))
+			Expect(streamService.lastLimit).To(Equal(15))
+			Expect(streamService.lastFromSlug).To(Equal("CBA321"))
 		})
 	})
 })

@@ -14,7 +14,7 @@ import (
 	"github.com/julienschmidt/httprouter"
 	nlog "github.com/meatballhat/negroni-logrus"
 	librato "github.com/mihasya/go-metrics-librato"
-	"github.com/rcrowley/go-metrics"
+	metrics "github.com/rcrowley/go-metrics"
 )
 
 var commit string
@@ -26,10 +26,11 @@ Set ENV Variables to configure:
 
 ELLO_API_PORT for the port to run this service on.  Default is 8080
 ELLO_ROSHI_HOST for the location of the roshi instance.  Default is http://localhost:6302
+ELLO_ROSHI_TIMEOUT for the timeout (in Seconds) for roshi connections.  Default is 5s.
 ELLO_AUTH_ENABLED any value will enable basic auth.  Default is disabled.
 ELLO_AUTH_USERNAME for the auth username.  Default is 'ello'.
 ELLO_AUTH_PASSWORD for the auth password.  Default is 'password'.
-ELLO_LOG_LEVEL for the log level.  Valid levels are "debug", "info", "warn", "error"
+ELLO_LOG_LEVEL for the log level.  Valid levels are "debug", "info", "warn", "error".  Default is warn. 
 ELLO_LIBRATO_EMAIL librato config
 ELLO_LIBRATO_TOKEN librato config
 ELLO_LIBRATO_HOSTNAME librato config
@@ -62,7 +63,7 @@ func main() {
 	fmt.Printf("Using log level [%v]\n", logLevel)
 
 	roshi := util.GetEnvWithDefault("ELLO_ROSHI_HOST", "http://localhost:6302")
-	streamsService, err := service.NewRoshiStreamService(roshi)
+	streamsService, err := service.NewRoshiStreamService(roshi, time.Duration(util.GetEnvIntWithDefault("ELLO_ROSHI_TIMEOUT", 5))*time.Second)
 	if err != nil {
 		log.Panic(err)
 	}

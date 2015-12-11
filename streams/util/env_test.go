@@ -28,7 +28,24 @@ func TestGetEnvWithDefault(t *testing.T) {
 
 	result = util.GetEnvWithDefault(key2, "default")
 	if result != "default" {
+		t.Error("Default value should be returned")
+	}
+}
+
+func TestGetEnvIntWithDefault(t *testing.T) {
+	key := "AbC_123"
+	key2 := "AAAZZZ___"
+	val := "1"
+	_ = os.Setenv(key, val)
+
+	result := util.GetEnvIntWithDefault(key, 10)
+	if result != 1 {
 		t.Error("Default value should not be returned")
+	}
+
+	result = util.GetEnvIntWithDefault(key2, 10)
+	if result != 10 {
+		t.Error("Default value should be returned")
 	}
 }
 

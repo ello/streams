@@ -1,6 +1,7 @@
 package api_test
 
 import (
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"strings"
@@ -26,22 +27,23 @@ type mockStreamService struct {
 	lastFromSlug   string
 }
 
-func (s mockStreamService) Add(items []model.StreamItem) error {
+func (s *mockStreamService) Add(items []model.StreamItem) error {
 	s.lastItemsOnAdd = items
 	s.internal = append(s.internal, items...)
 	return nil
 }
 
-func (s mockStreamService) Load(query model.StreamQuery, limit int, fromSlug string) (*model.StreamQueryResponse, error) {
+func (s *mockStreamService) Load(query model.StreamQuery, limit int, fromSlug string) (*model.StreamQueryResponse, error) {
 	s.lastLimit = limit
 	s.lastFromSlug = fromSlug
+	fmt.Println("From slug: " + fromSlug)
 	return &model.StreamQueryResponse{Items: s.internal}, nil
 }
 
 var (
 	router        *httprouter.Router
 	response      *httptest.ResponseRecorder
-	streamService mockStreamService
+	streamService *mockStreamService
 )
 
 func Request(method string, route string, body string) {
@@ -66,7 +68,7 @@ var _ = BeforeSuite(func() {
 
 	StreamID, _ := uuid.V4()
 
-	streamService = mockStreamService{
+	streamService = &mockStreamService{
 		internal: generateFakeResponse(StreamID),
 	}
 
