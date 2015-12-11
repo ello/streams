@@ -92,7 +92,6 @@ func (s roshiStreamService) Load(query model.StreamQuery, limit int, cursor stri
 
 	uri := fmt.Sprintf("%v?coalesce=true&limit=%d", s.url.String(), limit)
 	if len(cursor) != 0 {
-		// TODO Should probably validate the slug is valid here and return an error if not
 		uri = fmt.Sprintf("%v&start=%v", uri, cursor)
 	}
 
