@@ -1,20 +1,15 @@
 sudo: required
-
 language: go
-
 go:
-  - 1.5.1
-
+- 1.5.1
 services:
-  - docker
-
+- docker
 before_install:
-  - docker-compose -f ./streams/docker-compose.yml up -d roshi
-
+- docker-compose -f ./streams/docker-compose.yml up -d roshi
 install:
-  - make setup-ci
-
+- make setup-ci
 script: make test
-
 notifications:
-  slack: ***REMOVED***
+  slack:
+    rooms:
+      secure: NR+s4ucHBLjqkhApOy5NoVo56o2+m3wa36iXUX4/YNOdMzTUV6EzqqOkSZvJd4foZUjBixEJsocWIwhKHmXUEo3oMkIYUMQcEYFtI7OY7b/qseYyylVl4FxdHsppeDmcF9AG0pdjbNimPXCVXwZHZHBGbE3jNyaseCjiLDpojDruTnwQ9FXu9ffuR5eDlaJgLCo2qy3aCVGg6d5CqKyDaIxYlrLm2FybiCrrx8Dy9fiEvlecOITBETbuAxci7+S211ODi+sObTKGQr457ImJ1vY2SG4dC3YZ4+b2Zr8vE9IPeW4M/E26bpGoysCPjtUCerKkt6682ZJQivcoKcnCfbM0K4NIg13pLK1QemUxku1xpju73kfT2jD6J9ALdMy0i6+RmbcfC+baQ0MKK0rsT02aE7hTyDlfHiBKj/2AoUgO7ataQfE5zMRZqW/5j5qx4UfNenTp6q4+q5wbiesNBcVPjheaf8CIArz4hZXq5mpUbvQKZShJKENDg7MjLQh7DhdzyMlUuAL+Xw8iRacYgcUKctTO7kLJ+ysaedMBlFxGJ+tKDlz4AqcnFLnstcrKQXHl2asS+Mwr96hSIbWGLpAynOr6yROO1zTVvc8bLf7rYC86I+KVviD4N+mFr/YEXrrhy+UviXsNdETa18GwR5s9EAIsmCYXNj7jyv1U3P0=
