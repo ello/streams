@@ -54,7 +54,7 @@ vet:
 # TODO Re-enable these linters once vendor support is better (potentially 1.6)
 lint:export GO15VENDOREXPERIMENT=1
 lint:
-	@gometalinter --vendor  --deadline=10s --disable=gotype --disable=varcheck --disable=aligncheck --disable=structcheck --dupl-threshold=70 `glide novendor`
+	@gometalinter --vendor  --deadline=10s --disable=gotype --disable=varcheck --disable=aligncheck --disable=structcheck --disable=errcheck --disable=interfacer --dupl-threshold=70 `glide novendor`
 	@$(PRINT_OK)
 
 fmt:export GO15VENDOREXPERIMENT=1
