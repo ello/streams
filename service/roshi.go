@@ -15,7 +15,7 @@ import (
 
 	log "github.com/Sirupsen/logrus"
 
-	"github.com/ello/ello-go/streams/model"
+	"github.com/ello/streams/model"
 )
 
 //NewRoshiStreamService takes a url for the roshi server and returns the service

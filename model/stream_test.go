@@ -4,7 +4,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/ello/ello-go/streams/model"
+	"github.com/ello/streams/model"
 )
 
 func CheckStreamItems(c model.StreamItem, c1 model.StreamItem, t *testing.T) {

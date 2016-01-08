@@ -8,8 +8,8 @@ import (
 	"time"
 
 	log "github.com/Sirupsen/logrus"
-	"github.com/ello/ello-go/streams/api"
-	"github.com/ello/ello-go/streams/model"
+	"github.com/ello/streams/api"
+	"github.com/ello/streams/model"
 	"github.com/julienschmidt/httprouter"
 	"github.com/m4rw3r/uuid"
 	. "github.com/onsi/ginkgo"

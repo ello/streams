@@ -14,8 +14,8 @@ roshi:
 streams:
   build: .
   environment:
-    ELLO_API_PORT: "8080"
-    ELLO_ROSHI_HOST: "http://roshi:6302"
+    PORT: "8080"
+    ROSHI_URL: "http://roshi:6302"
   links:
     - roshi
   ports:

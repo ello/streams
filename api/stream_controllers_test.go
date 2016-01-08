@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/ello/ello-go/streams/model"
+	"github.com/ello/streams/model"
 	"github.com/m4rw3r/uuid"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
