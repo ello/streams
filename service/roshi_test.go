@@ -3,9 +3,9 @@ package service_test
 import (
 	"time"
 
-	"github.com/ello/ello-go/streams/model"
-	"github.com/ello/ello-go/streams/service"
-	"github.com/ello/ello-go/streams/util"
+	"github.com/ello/streams/model"
+	"github.com/ello/streams/service"
+	"github.com/ello/streams/util"
 	"github.com/m4rw3r/uuid"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -15,7 +15,7 @@ var _ = Describe("Roshi Channel Service", func() {
 	var _ = Describe("Instantiation", func() {
 
 		It("sanity?", func() {
-			s, err := service.NewRoshiStreamService(util.GetEnvWithDefault("ELLO_ROSHI_HOST", "http://localhost:6302"), (5 * time.Second))
+			s, err := service.NewRoshiStreamService(util.GetEnvWithDefault("ROSHI_URL", "http://localhost:6302"), (5 * time.Second))
 			Expect(err).To(BeNil())
 			Expect(s).NotTo(BeNil())
 		})
@@ -23,7 +23,7 @@ var _ = Describe("Roshi Channel Service", func() {
 	})
 	var s service.StreamService
 	BeforeEach(func() {
-		s, _ = service.NewRoshiStreamService(util.GetEnvWithDefault("ELLO_ROSHI_HOST", "http://localhost:6302"), (5 * time.Second))
+		s, _ = service.NewRoshiStreamService(util.GetEnvWithDefault("ROSHI_URL", "http://localhost:6302"), (5 * time.Second))
 	})
 
 	Context(".Add", func() {

@@ -7,7 +7,7 @@ import (
 	"time"
 
 	log "github.com/Sirupsen/logrus"
-	"github.com/ello/ello-go/streams/model"
+	"github.com/ello/streams/model"
 	"github.com/m4rw3r/uuid"
 )
 

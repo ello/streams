@@ -9,9 +9,9 @@ import (
 	"time"
 
 	log "github.com/Sirupsen/logrus"
-	"github.com/ello/ello-go/streams/model"
-	"github.com/ello/ello-go/streams/service"
-	"github.com/ello/ello-go/streams/util"
+	"github.com/ello/streams/model"
+	"github.com/ello/streams/service"
+	"github.com/ello/streams/util"
 	"github.com/julienschmidt/httprouter"
 	"github.com/rcrowley/go-metrics"
 )

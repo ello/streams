@@ -24,3 +24,9 @@ _testmain.go
 *.prof
 *.idea
 *.iml
+
+bin
+streams
+vendor
+
+

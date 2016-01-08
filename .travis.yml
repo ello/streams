@@ -1,16 +1,16 @@
 sudo: required
 language: go
 go:
-- 1.5.1
+  - 1.5.1
 services:
-- docker
+  - docker
 env:
   global:
     - GO15VENDOREXPERIMENT=1
 before_install:
-- docker-compose -f ./streams/docker-compose.yml up -d roshi
+  - docker-compose up -d roshi
 install:
-- make setup-ci
+  - make setup
 script:
   - make test
 notifications:

@@ -1,6 +1,6 @@
 package service
 
-import "github.com/ello/ello-go/streams/model"
+import "github.com/ello/streams/model"
 
 // StreamService is the interface to the underlying stream storage system.
 type StreamService interface {

@@ -1,4 +1,4 @@
-package: github.com/ello/ello-go/streams
+package: github.com/ello/streams
 import:
 - package: github.com/onsi/ginkgo
 - package: github.com/onsi/gomega
