@@ -23,9 +23,21 @@ setup-ci: announce get-tools-ci
 get-tools-ci:
 	@go get -u "github.com/Masterminds/glide"
 	@go build "github.com/Masterminds/glide"
-	@go get -u "github.com/alecthomas/gometalinter" > /dev/null 2>&1
-	@gometalinter --install --update --force  > /dev/null 2>&1
-	@$(PRINT_OK)
+	@go get -u "github.com/alecthomas/gometalinter"
+	# This is broken for the moment due to https://github.com/opennota/check/issues/25
+	# When that's fixed we can go back to the `gometalinter` command instead of individual installs
+	# @gometalinter --install --update --force
+	@go get -u -f "golang.org/x/tools/cmd/goimports"
+	@go get -u -f "github.com/kisielk/errcheck"
+	@go get -u -f "github.com/gordonklaus/ineffassign"
+	@go get -u -f "github.com/mibk/dupl"
+	@go get -u -f "github.com/alecthomas/gometalinter"
+	@go get -u -f "golang.org/x/tools/cmd/gotype"
+	@go get -u -f "github.com/tsenart/deadcode"
+	@go get -u -f "github.com/alecthomas/gocyclo"
+	@go get -u -f "github.com/mvdan/interfacer/cmd/interfacer"
+	@go get -u -f "github.com/golang/lint/golint"
+	@$(PRINT_OK")
 
 
 # db-setup:

@@ -7,8 +7,8 @@ setup: dependencies
 #TODO Try getting rid of the vendor flag env var after 1.6 is out
 dependencies:export GO15VENDOREXPERIMENT=1
 dependencies:
-	@glide install > /dev/null 2>&1
-	@glide rebuild > /dev/null 2>&1
+	@glide install
+	@glide rebuild
 	@$(PRINT_OK)
 
 clean:
@@ -24,7 +24,7 @@ vet:
 # TODO Re-enable these linters once vendor support is better (potentially 1.6)
 lint:export GO15VENDOREXPERIMENT=1
 lint:
-	@gometalinter --vendor  --deadline=10s --disable=gotype --disable=aligncheck --disable=structcheck --dupl-threshold=70 `glide novendor`
+	@gometalinter --vendor  --deadline=10s --disable=gotype --disable=varcheck --disable=aligncheck --disable=structcheck --dupl-threshold=70 `glide novendor`
 	@$(PRINT_OK)
 
 fmt:export GO15VENDOREXPERIMENT=1
