@@ -1,7 +1,18 @@
+<img src="http://d324imu86q1bqn.cloudfront.net/uploads/user/avatar/641/large_Ello.1000x1000.png" width="200px" height="200px" />
+
+# Streams - Roshi-based activity feeds
+[Soundcloud's Roshi](https://github.com/soundcloud/roshi) is an awesome tool for building activity feeds for social applications. It comes with a built-in REST API in the form of `roshi-server`, but it's a bit low-level and some of the REST semantics are a bit questionable. Streams is a simple RESTful Go wrapper for Roshi that makes working with it just a little bit easier.
+
 [![Build Status](https://travis-ci.org/ello/streams.svg)](https://travis-ci.org/ello/streams)
 
-# Ello Streams
-This repository contains Ello's Streams wrapper for Roshi.
+### Quickstart
+
+* Install Go 1.5
+* Clone this repo to `$GOPATH/src/github.com/ello/streams`
+* From _$GOPATH/src/github.com/ello/streams_, execute `make setup`
+* Verify you have a working docker install with a valid docker-machine daemon connected
+* `docker-compose start roshi`
+* `ROSHI_URL="http://$(docker-machine ip default):6302" make test`
 
 ## Getting Set Up With Go
 
@@ -16,7 +27,7 @@ This repository contains Ello's Streams wrapper for Roshi.
       * https://cnswww.cns.cwru.edu/php/chet/readline/rltop.html
 * For some of our services, we also recommend the use of docker to ease development.  For specific details, see the individual wiki's, but we'd recommend you install docker, docker-machine and docker-compose.  Either use docker toolbox, or install via homebrew.  
 
-### Streams - Getting Started
+## Development
 After following the above steps, to run/test/build the streams application:
 
 First, you need to make sure you have glide, gometalinter(and the linters it uses), and fswatch for all make commands to work.  There is a make target in the parent directory `make get-tools` that will do this for you.
@@ -35,9 +46,9 @@ Next, you need to make sure that you have vendored all of the dependencies for t
   * `docker-compose up -d` You may want to `docker-compose stop` and `docker-compose rm` first, if you started roshi by hand earlier.  Also, again note that the -d can be omitted to foreground it.
     * Once running, you can access it at http://$(docker-machine ip default):8080 (try http://$(docker-machine ip default):808/health/check)
 
-#### TLDR
+## License
+Streams is released under the [MIT License](blob/master/LICENSE.txt)
 
-* From _$GOPATH/src/github.com/ello/streams_, execute `make setup`
-* Verify you have a working docker install with a valid docker-machine daemon connected
-* `docker-compose start roshi`
-* `ROSHI_URL="http://$(docker-machine ip default):6302" make test`
+## Code of Conduct
+Ello was created by idealists who believe that the essential nature of all human beings is to be kind, considerate, helpful, intelligent, responsible, and respectful of others. To that end, we will be enforcing [the Ello rules](https://ello.co/wtf/policies/rules/) within all of our open source projects. If you don’t follow the rules, you risk being ignored, banned, or reported for abuse.
+
