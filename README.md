@@ -3,7 +3,7 @@
 # Streams - Roshi-based activity feeds
 Streams is a RESTful Go wrapper for [Soundcloud's Roshi](https://github.com/soundcloud/roshi), an awesome tool for building activity feeds. Streams improves upon the built-in `roshi-server` REST API by mapping some of its low-level concepts into higher-level ones and using more conventional REST semantics.
 
-[![Build Status](https://travis-ci.org/ello/streams.svg)](https://travis-ci.org/ello/streams)
+[![Build Status](https://travis-ci.org/ello/streams.svg?branch=master)](https://travis-ci.org/ello/streams)
 
 ### Quickstart
 
