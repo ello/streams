@@ -79,5 +79,40 @@ var _ = Describe("Roshi Channel Service", func() {
 				Expect(c1.Timestamp).To(BeTemporally("~", content.Timestamp, time.Millisecond))
 			})
 		})
+
+		Context(".Remove", func() {
+			It("Remove content previously added to the channel", func() {
+				chanID, _ := uuid.V4()
+				contentID, _ := uuid.V4()
+
+				content := model.StreamItem{
+					ID:        contentID.String(),
+					Timestamp: time.Now(),
+					Type:      model.TypePost,
+					StreamID:  chanID.String(),
+				}
+				items := []model.StreamItem{
+					content,
+				}
+				err := s.Add(items)
+				Expect(err).To(BeNil())
+
+				fakeChanID, _ := uuid.V4()
+				q := model.StreamQuery{
+					Streams: []string{fakeChanID.String(), chanID.String()},
+				}
+
+				resp, _ := s.Load(q, 10, "")
+				c := resp.Items
+				Expect(c).NotTo(BeEmpty())
+				Expect(len(c)).To(Equal(1))
+
+				rm_err := s.Remove(items)
+				Expect(rm_err).To(BeNil())
+
+				resp2, _ := s.Load(q, 10, "")
+				Expect(resp2.Items).To(BeEmpty())
+			})
+		})
 	})
 })
