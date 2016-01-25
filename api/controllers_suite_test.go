@@ -21,15 +21,23 @@ import (
 var StreamID uuid.UUID
 
 type mockStreamService struct {
-	internal       []model.StreamItem
-	lastItemsOnAdd []model.StreamItem
-	lastLimit      int
-	lastFromSlug   string
+	internal          []model.StreamItem
+	lastItemsOnAdd    []model.StreamItem
+	lastItemsOnRemove []model.StreamItem
+	lastLimit         int
+	lastFromSlug      string
 }
 
 func (s *mockStreamService) Add(items []model.StreamItem) error {
 	s.lastItemsOnAdd = items
 	s.internal = append(s.internal, items...)
+	return nil
+}
+
+func (s *mockStreamService) Remove(items []model.StreamItem) error {
+	s.lastItemsOnRemove = items
+	// I think we should remove items here.
+	//s.internal = append(s.internal, items...)
 	return nil
 }
 

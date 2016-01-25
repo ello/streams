@@ -36,6 +36,14 @@ type roshiStreamService struct {
 }
 
 func (s roshiStreamService) Add(items []model.StreamItem) error {
+	return s.RequestWithItems("POST", items)
+}
+
+func (s roshiStreamService) Remove(items []model.StreamItem) error {
+	return s.RequestWithItems("DELETE", items)
+}
+
+func (s roshiStreamService) RequestWithItems(method string, items []model.StreamItem) error {
 	rItems, err := model.ToRoshiStreamItem(items)
 	if err != nil {
 		log.Error(err)
@@ -55,7 +63,7 @@ func (s roshiStreamService) Add(items []model.StreamItem) error {
 		"URL":  uri,
 	}).Debug("Preparing to make request")
 
-	req, err := http.NewRequest("POST", uri, bytes.NewBuffer(requestBody))
+	req, err := http.NewRequest(method, uri, bytes.NewBuffer(requestBody))
 	if log.GetLevel() >= log.DebugLevel {
 		debug(httputil.DumpRequestOut(req, true))
 	}

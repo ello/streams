@@ -17,6 +17,7 @@ import (
 )
 
 var addToStreamTimer metrics.Timer
+var removeFromStreamTimer metrics.Timer
 var coalesceTimer metrics.Timer
 var getStreamTimer metrics.Timer
 
@@ -29,9 +30,11 @@ type streamController struct {
 //NewStreamController is the exported constructor for a streams controller
 func NewStreamController(service service.StreamService, authConfig AuthConfig) Controller {
 	addToStreamTimer = metrics.NewTimer()
+	removeFromStreamTimer = metrics.NewTimer()
 	coalesceTimer = metrics.NewTimer()
 	getStreamTimer = metrics.NewTimer()
 	metrics.Register("Streams.AddToStream", addToStreamTimer)
+	metrics.Register("Streams.RemoveFromStream", removeFromStreamTimer)
 	metrics.Register("Streams.Coalesce", coalesceTimer)
 	metrics.Register("Streams.GetStream", getStreamTimer)
 
@@ -39,15 +42,15 @@ func NewStreamController(service service.StreamService, authConfig AuthConfig) C
 }
 
 func (c *streamController) Register(router *httprouter.Router) {
-	router.PUT("/streams", basicAuth(c.handle(c.addToStream), c.authConfig))
-	router.POST("/streams/coalesce", basicAuth(c.handle(c.coalesceStreams), c.authConfig))
-	router.GET("/stream/:id", basicAuth(c.handle(c.getStream), c.authConfig))
+	router.PUT("/streams", basicAuth(timeRequest(c.handle(c.addToStream), addToStreamTimer), c.authConfig))
+	router.DELETE("/streams", basicAuth(timeRequest(c.handle(c.removeFromStream), removeFromStreamTimer), c.authConfig))
+	router.POST("/streams/coalesce", basicAuth(timeRequest(c.handle(c.coalesceStreams), coalesceTimer), c.authConfig))
+	router.GET("/stream/:id", basicAuth(timeRequest(c.handle(c.getStream), getStreamTimer), c.authConfig))
 
 	log.Debug("Routes Registered")
 }
 
 func (c *streamController) coalesceStreams(w http.ResponseWriter, r *http.Request, ps httprouter.Params) error {
-	startTime := time.Now()
 	body, err := ioutil.ReadAll(r.Body)
 	log.WithFields(fieldsFor(r, body, err)).Debug("/coalesce")
 
@@ -74,12 +77,10 @@ func (c *streamController) coalesceStreams(w http.ResponseWriter, r *http.Reques
 	addLink(w, nextPage(r, response, limit))
 
 	c.JSON(w, http.StatusOK, response.Items)
-	coalesceTimer.UpdateSince(startTime)
 	return nil
 }
 
 func (c *streamController) getStream(w http.ResponseWriter, r *http.Request, ps httprouter.Params) error {
-	startTime := time.Now()
 	log.WithFields(fieldsFor(r, nil, nil)).Debug("/getStream")
 
 	//get ID and validate that it is a uuid.
@@ -100,35 +101,31 @@ func (c *streamController) getStream(w http.ResponseWriter, r *http.Request, ps 
 	addLink(w, nextPage(r, response, limit))
 
 	c.JSON(w, http.StatusOK, response.Items)
-	getStreamTimer.UpdateSince(startTime)
 	return nil
 }
 
 func (c *streamController) addToStream(w http.ResponseWriter, r *http.Request, ps httprouter.Params) error {
-	startTime := time.Now()
-	body, err := ioutil.ReadAll(r.Body)
-	log.WithFields(fieldsFor(r, body, err)).Debug("/addToStream")
+	return c.performStreamAction(w, r, c.streamService.Add, http.StatusCreated)
+}
 
-	var items []model.StreamItem
-	err = json.Unmarshal(body, &items)
+func (c *streamController) removeFromStream(w http.ResponseWriter, r *http.Request, ps httprouter.Params) error {
+	return c.performStreamAction(w, r, c.streamService.Remove, http.StatusOK)
+}
 
-	log.WithFields(log.Fields{
-		"items": items,
-		"err":   err,
-	}).Debug("Unmarshaled items")
+func (c *streamController) performStreamAction(w http.ResponseWriter, r *http.Request, action func([]model.StreamItem) error, status int) error {
+	items, err := getItemsFromBody(r, "/updateStream")
 
 	if err != nil {
-		return StatusError{Code: 422, Err: errors.New("body must be an array of StreamItems")}
+		return err
 	}
 
-	err = c.streamService.Add(items)
+	err = action(items)
 
 	if err != nil {
-		return StatusError{Code: 400, Err: errors.New("An error occurred adding to the stream(s)")}
+		return StatusError{Code: 400, Err: errors.New("An error occurred removing from the stream(s)")}
 	}
 
-	c.JSON(w, http.StatusCreated, nil)
-	addToStreamTimer.UpdateSince(startTime)
+	c.JSON(w, status, nil)
 	return nil
 }
 
@@ -145,4 +142,32 @@ func nextPage(r *http.Request, items *model.StreamQueryResponse, limit int) stri
 	}
 
 	return fmt.Sprintf("%v%v%v?limit=%d&from=%s", uri, r.Host, r.URL.Path, limit, items.Cursor)
+}
+
+func getItemsFromBody(r *http.Request, debugName string) ([]model.StreamItem, error) {
+	body, err := ioutil.ReadAll(r.Body)
+	log.WithFields(fieldsFor(r, body, err)).Debug(debugName)
+
+	var items []model.StreamItem
+	err = json.Unmarshal(body, &items)
+
+	log.WithFields(log.Fields{
+		"items": items,
+		"err":   err,
+	}).Debug("Unmarshaled items")
+
+	if err != nil {
+		return items, StatusError{Code: 422, Err: errors.New("body must be an array of StreamItems")}
+	}
+
+	return items, err
+}
+
+func timeRequest(action httprouter.Handle, timer metrics.Timer) httprouter.Handle {
+	return func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+		startTime := time.Now()
+		action(w, r, ps)
+		timer.UpdateSince(startTime)
+		return
+	}
 }

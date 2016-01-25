@@ -127,6 +127,40 @@ var _ = Describe("StreamController", func() {
 			Expect(response.Code).To(Equal(422))
 		})
 	})
+
+	Context("when removing content via DELETE /streams", func() {
+
+		It("should return a status 200 when passed a correct body", func() {
+			item1ID, _ := uuid.V4()
+			item2ID, _ := uuid.V4()
+			items := []model.StreamItem{{
+				StreamID:  id.String(),
+				Timestamp: time.Now(),
+				Type:      0,
+				ID:        item1ID.String(),
+			}, {
+				StreamID:  id.String(),
+				Timestamp: time.Now(),
+				Type:      1,
+				ID:        item2ID.String(),
+			}}
+			itemsJSON, _ := json.Marshal(items)
+
+			// Create First
+			Request("PUT", "/streams", string(itemsJSON))
+			Expect(response.Code).To(Equal(http.StatusCreated))
+
+			// Now delete
+			Request("DELETE", "/streams", string(itemsJSON))
+			logResponse(response)
+
+			Expect(response.Code).To(Equal(http.StatusOK))
+
+			//verify the items passed into the service are the same
+			checkAll(streamService.lastItemsOnRemove, items)
+		})
+	})
+
 	Context("when retrieving a stream via /stream/:id", func() {
 
 		It("should return a status 201 when accessed with a valid ID", func() {
