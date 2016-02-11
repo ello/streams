@@ -17,3 +17,4 @@ import:
   subpackages:
   - /native
 - package: github.com/mihasya/go-metrics-librato
+- package: github.com/honeybadger-io/honeybadger-go

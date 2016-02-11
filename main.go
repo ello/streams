@@ -11,6 +11,7 @@ import (
 	"github.com/ello/streams/api"
 	"github.com/ello/streams/service"
 	"github.com/ello/streams/util"
+	"github.com/honeybadger-io/honeybadger-go"
 	"github.com/julienschmidt/httprouter"
 	nlog "github.com/meatballhat/negroni-logrus"
 	librato "github.com/mihasya/go-metrics-librato"
@@ -37,6 +38,12 @@ LIBRATO_HOSTNAME librato config
 `
 
 func main() {
+
+	hbKey := os.Getenv("HONEY_BADGER_API_KEY")
+	honeybadger.Configure(honeybadger.Configuration{APIKey: hbKey})
+
+	// Catch unhandled errors
+	defer honeybadger.Monitor()
 
 	flag.BoolVar(&help, "h", false, "help?")
 	flag.Parse()
@@ -98,7 +105,7 @@ func main() {
 		negroni.NewRecovery(),
 		nlog.NewCustomMiddleware(logLevel, &log.TextFormatter{}, "web"),
 	)
-	n.UseHandler(router)
+	n.UseHandler(honeybadger.Handler(router))
 
 	port := util.GetEnvWithDefault("PORT", "8080")
 	serverAt := ":" + port
