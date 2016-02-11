@@ -39,7 +39,7 @@ LIBRATO_HOSTNAME librato config
 
 func main() {
 
-	hbKey := os.Getenv("HONEY_BADGER_API_KEY")
+	hbKey := os.Getenv("HONEYBADGER_API_KEY")
 	honeybadger.Configure(honeybadger.Configuration{APIKey: hbKey})
 
 	// Catch unhandled errors
