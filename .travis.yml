@@ -1,22 +1,22 @@
 sudo: required
 language: go
 go:
-  - 1.5.1
+- 1.5.1
 services:
-  - docker
+- docker
 env:
   global:
-    - GO15VENDOREXPERIMENT=1
+  - GO15VENDOREXPERIMENT=1
 before_install:
-  - docker-compose up -d roshi
+- docker-compose up -d roshi
 install:
-  - make setup
+- make setup
 script:
-  - make test
+- make test
 notifications:
   email: false
   slack:
     on_success: change
     on_failure: change
     rooms:
-      secure: NR+s4ucHBLjqkhApOy5NoVo56o2+m3wa36iXUX4/YNOdMzTUV6EzqqOkSZvJd4foZUjBixEJsocWIwhKHmXUEo3oMkIYUMQcEYFtI7OY7b/qseYyylVl4FxdHsppeDmcF9AG0pdjbNimPXCVXwZHZHBGbE3jNyaseCjiLDpojDruTnwQ9FXu9ffuR5eDlaJgLCo2qy3aCVGg6d5CqKyDaIxYlrLm2FybiCrrx8Dy9fiEvlecOITBETbuAxci7+S211ODi+sObTKGQr457ImJ1vY2SG4dC3YZ4+b2Zr8vE9IPeW4M/E26bpGoysCPjtUCerKkt6682ZJQivcoKcnCfbM0K4NIg13pLK1QemUxku1xpju73kfT2jD6J9ALdMy0i6+RmbcfC+baQ0MKK0rsT02aE7hTyDlfHiBKj/2AoUgO7ataQfE5zMRZqW/5j5qx4UfNenTp6q4+q5wbiesNBcVPjheaf8CIArz4hZXq5mpUbvQKZShJKENDg7MjLQh7DhdzyMlUuAL+Xw8iRacYgcUKctTO7kLJ+ysaedMBlFxGJ+tKDlz4AqcnFLnstcrKQXHl2asS+Mwr96hSIbWGLpAynOr6yROO1zTVvc8bLf7rYC86I+KVviD4N+mFr/YEXrrhy+UviXsNdETa18GwR5s9EAIsmCYXNj7jyv1U3P0=
+      secure: hOuHR3RA260JlVLj1jFiXT0fP6lthG58U4HQoiNSAdsilzLYlT6/1JPikQLIBIKJBSsTtZxdMSNZLwuixPpQLGHJJLZ1g70A1xNZK1mZ20ofeYKyHviyDWcsSTeCYUhMtnkm7XnEM9EJCaB8w2n5e2B61QeMZf57R3sYoC1GS+rAkqvgMgVlqlpAV3Pq1eo4zEY30LJo0Nmaz5IQzS+QN3a9hshftPKaBR9eNjpuIvYJNXjUMRsJZCjVh70pvM1b/Mqwrl4hoc8gEa1Ec9+ESr+VEz4gzlXY4Be7CiMvzyW8oAg8CAEluLUMulN0daXUsN2fWkvpSgjbDwZsrpnMencgZuDsyoNTfPg/5LzA9WHaBgnJAtC25BG7a/RTW6/GyEdLjJxT4DlEwpaRDMSaYqqgE3Vml8cGBVyzSHPd0lT0Jog0LdQ72+T8P3bu3j7UIEkbkq4Z4mHj4XaOI3r9UU2GSM8lJJr0GuSNiUOZ/qniMcjCvsNduW7x9HW9VVy8o1QNeGjys9BpJpA90Y/BRZicEcV3uHHJeyGmz6rYmij3JsNBkmw253D5pYEA3fAmH11g6JtJqwPcg/TlkAOQ37nEEgUIp++VEQOPJw83yI5Emy4BKigMf11uS52XVBHdc1q/dTF4ypda4LNBq1KwbD19RcL8MOAE6667UtewVQM=
