@@ -67,7 +67,7 @@ func (c *healthController) healthCheck(w http.ResponseWriter, r *http.Request, p
 func (c *healthController) heartbeat(w http.ResponseWriter, r *http.Request, ps httprouter.Params) error {
 	heartbeat := heartbeatResponse{
 		Commit: c.commit,
-		Uptime: time.Now().Sub(c.startTime).String(),
+		Uptime: time.Since(c.startTime).String(),
 	}
 
 	c.JSON(w, http.StatusOK, heartbeat)

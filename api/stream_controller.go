@@ -168,6 +168,5 @@ func timeRequest(action httprouter.Handle, timer metrics.Timer) httprouter.Handl
 		startTime := time.Now()
 		action(w, r, ps)
 		timer.UpdateSince(startTime)
-		return
 	}
 }

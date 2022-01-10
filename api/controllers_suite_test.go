@@ -119,7 +119,7 @@ func generateFakeResponse(streamID uuid.UUID) []model.StreamItem {
 func logResponse(r *httptest.ResponseRecorder) {
 	log.WithFields(log.Fields{
 		"status":  r.Code,
-		"headers": r.HeaderMap,
+		"headers": r.Header,
 		"body":    r.Body.String(),
 	}).Debug("Got Response")
 }
