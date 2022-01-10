@@ -1,12 +1,18 @@
 package: github.com/ello/streams
+
 import:
-- package: github.com/onsi/ginkgo
+- package: github.com/onsi/ginkgo/ginkgo
+  version: v1.16.5
+
 - package: github.com/onsi/gomega
 - package: github.com/julienschmidt/httprouter
 - package: github.com/golang/protobuf
   subpackages:
   - /proto
-- package: github.com/Sirupsen/logrus
+
+- package: github.com/sirupsen/logrus
+  version: master
+
 - package: gopkg.in/gemnasium/logrus-airbrake-hook.v2
 - package: github.com/m4rw3r/uuid
 - package: github.com/unrolled/render

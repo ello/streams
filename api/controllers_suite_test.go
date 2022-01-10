@@ -7,7 +7,7 @@ import (
 	"strings"
 	"time"
 
-	log "github.com/Sirupsen/logrus"
+	log "github.com/sirupsen/logrus"
 	"github.com/ello/streams/api"
 	"github.com/ello/streams/model"
 	"github.com/julienschmidt/httprouter"
