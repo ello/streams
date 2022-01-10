@@ -6,7 +6,7 @@ import (
 	"os"
 	"time"
 
-	log "github.com/Sirupsen/logrus"
+	log "github.com/sirupsen/logrus"
 	"github.com/codegangsta/negroni"
 	"github.com/ello/streams/api"
 	"github.com/ello/streams/service"
