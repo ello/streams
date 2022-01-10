@@ -6,9 +6,9 @@ import (
 	"testing"
 	"time"
 
-	log "github.com/Sirupsen/logrus"
 	"github.com/ello/streams/model"
 	"github.com/m4rw3r/uuid"
+	log "github.com/sirupsen/logrus"
 )
 
 func TestMain(m *testing.M) {
@@ -92,5 +92,20 @@ func checkRoshiItems(c model.RoshiStreamItem, c1 model.RoshiStreamItem, t *testi
 func checkAllRoshi(c []model.RoshiStreamItem, c1 []model.RoshiStreamItem, t *testing.T) {
 	for i := 0; i < len(c); i++ {
 		checkRoshiItems(c[i], c1[i], t)
+	}
+}
+
+func CheckStreamItems(c model.StreamItem, c1 model.StreamItem, t *testing.T) {
+	if c1.StreamID != c.StreamID {
+		t.Error("StreamIDs should match")
+	}
+	if c1.ID != c.ID {
+		t.Error("IDs should match")
+	}
+	if c1.Type != c.Type {
+		t.Error("Type should match")
+	}
+	if !c1.Timestamp.Round(time.Millisecond).Equal(c.Timestamp.Round(time.Millisecond)) {
+		t.Error("Timestamps should be within a millisecond")
 	}
 }

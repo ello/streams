@@ -8,12 +8,12 @@ import (
 	"net/http"
 	"time"
 
-	log "github.com/Sirupsen/logrus"
 	"github.com/ello/streams/model"
 	"github.com/ello/streams/service"
 	"github.com/ello/streams/util"
 	"github.com/julienschmidt/httprouter"
 	"github.com/rcrowley/go-metrics"
+	log "github.com/sirupsen/logrus"
 )
 
 var addToStreamTimer metrics.Timer

@@ -7,13 +7,13 @@ import (
 	"strings"
 	"time"
 
-	log "github.com/Sirupsen/logrus"
 	"github.com/ello/streams/api"
 	"github.com/ello/streams/model"
 	"github.com/julienschmidt/httprouter"
 	"github.com/m4rw3r/uuid"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
+	log "github.com/sirupsen/logrus"
 
 	"testing"
 )

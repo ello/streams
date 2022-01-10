@@ -1,22 +1,25 @@
-redis:
-  image: redis
-  ports:
-    - "6379:6379"
+version: '3'
 
-roshi:
-  image: "500px/roshi:latest"
-  links:
-    - redis
-  ports:
-    - "6302:6302"
-  command: "-redis.instances=redis:6379"
+services:
+  redis:
+    image: redis
+    ports:
+      - "6379:6379"
 
-streams:
-  build: .
-  environment:
-    PORT: "8080"
-    ROSHI_URL: "http://roshi:6302"
-  links:
-    - roshi
-  ports:
-    - "8080:8080"
+  roshi:
+    image: "pressly/roshi:latest"
+    links:
+      - redis
+    ports:
+      - "6302:6302"
+    command: "roshi-server  -redis.instances=redis:6379"
+
+  streams:
+    build: .
+    environment:
+      PORT: "8080"
+      ROSHI_URL: "http://roshi:6302"
+    links:
+      - roshi
+    ports:
+      - "8080:8080"

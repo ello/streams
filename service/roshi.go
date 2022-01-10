@@ -13,7 +13,7 @@ import (
 	"net/url"
 	"time"
 
-	log "github.com/Sirupsen/logrus"
+	log "github.com/sirupsen/logrus"
 
 	"github.com/ello/streams/model"
 )
@@ -90,7 +90,7 @@ func (s roshiStreamService) RequestWithItems(method string, items []model.Stream
 
 	if resp.StatusCode != 200 {
 		debug(httputil.DumpResponse(resp, true))
-		return errors.New("Request Failed with status: " + string(resp.StatusCode))
+		return errors.New("Request Failed with status: " + fmt.Sprint(resp.StatusCode))
 	}
 
 	return nil
@@ -141,7 +141,7 @@ func (s roshiStreamService) Load(query model.StreamQuery, limit int, cursor stri
 	data, err := ioutil.ReadAll(resp.Body)
 	if resp.StatusCode != 200 || err != nil {
 		debug(httputil.DumpResponse(resp, true))
-		return nil, errors.New("Request Failed with status: " + string(resp.StatusCode))
+		return nil, errors.New("Request Failed with status: " + fmt.Sprint(resp.StatusCode))
 	}
 
 	var result model.RoshiResponse

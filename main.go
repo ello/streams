@@ -6,7 +6,6 @@ import (
 	"os"
 	"time"
 
-	log "github.com/Sirupsen/logrus"
 	"github.com/codegangsta/negroni"
 	"github.com/ello/streams/api"
 	"github.com/ello/streams/service"
@@ -15,6 +14,7 @@ import (
 	nlog "github.com/meatballhat/negroni-logrus"
 	librato "github.com/mihasya/go-metrics-librato"
 	metrics "github.com/rcrowley/go-metrics"
+	log "github.com/sirupsen/logrus"
 )
 
 var commit string
@@ -30,7 +30,7 @@ ROSHI_TIMEOUT for the timeout (in Seconds) for roshi connections.  Default is 5s
 AUTH_ENABLED any value will enable basic auth.  Default is disabled.
 AUTH_USERNAME for the auth username.  Default is 'ello'.
 AUTH_PASSWORD for the auth password.  Default is 'password'.
-LOG_LEVEL for the log level.  Valid levels are "debug", "info", "warn", "error".  Default is warn. 
+LOG_LEVEL for the log level.  Valid levels are "debug", "info", "warn", "error".  Default is warn.
 LIBRATO_EMAIL librato config
 LIBRATO_TOKEN librato config
 LIBRATO_HOSTNAME librato config
@@ -77,7 +77,7 @@ func main() {
 
 	if util.IsEnvPresent("LIBRATO_TOKEN") {
 		go librato.Librato(metrics.DefaultRegistry,
-			10e9, // interval
+			10e9,                          // interval
 			os.Getenv("LIBRATO_EMAIL"),    // account owner email address
 			os.Getenv("LIBRATO_TOKEN"),    // Librato API token
 			os.Getenv("LIBRATO_HOSTNAME"), // source
